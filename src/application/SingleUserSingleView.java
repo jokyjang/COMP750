@@ -1,4 +1,4 @@
-package echo.application;
+package application;
 
 import echo.modular.ASimpleList;
 import echo.modular.AnEchoInteractor;

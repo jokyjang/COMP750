@@ -1,6 +1,6 @@
-package echo.application;
+package application;
 
-public interface ConsoleInteractor {
+public interface EchoerInteractor {
 //	public static final String ECHO_INDICATOR = EchoUtilities.ECHO_INDICATOR;
 //	public static final String QUIT = EchoUtilities.QUIT;
 //	public static final String HISTORY = EchoUtilities.HISTORY;

@@ -1,4 +1,4 @@
-package echo.application;
+package application;
 import static echo.monolithic.EchoUtilities.HISTORY;
 import static echo.monolithic.EchoUtilities.QUIT;
 
@@ -20,7 +20,7 @@ import echo.modular.SimpleList;
 import echo.monolithic.EchoUtilities;
 
 @Tags({ApplicationTags.ECHOER, InteractiveTags.INTERACTOR})
-public class AnConsoleInteractor implements ListObserver<String>, ConsoleInteractor {	
+public class AnConsoleInteractor implements ListObserver<String>, EchoerInteractor {	
 	protected SimpleList<String> history;
 	public AnConsoleInteractor(SimpleList<String> aHistory) {
 		history = aHistory;

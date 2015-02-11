@@ -1,4 +1,4 @@
-package echo.application;
+package application;
 
 public abstract class EchoerComposerAndLauncher {
 	public abstract void createModel();

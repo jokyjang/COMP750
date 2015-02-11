@@ -1,4 +1,4 @@
-package echo.application;
+package application;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Date;
