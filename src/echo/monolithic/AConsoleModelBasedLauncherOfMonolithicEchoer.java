@@ -2,7 +2,6 @@ package echo.monolithic;
 
 import bus.uigen.pipe.AConsoleModelBasedLauncher;
 import bus.uigen.pipe.ConsoleModelBasedLauncher;
-import bus.uigen.pipe.MainClassLaunchingUtility;
 
 public class AConsoleModelBasedLauncherOfMonolithicEchoer extends AConsoleModelBasedLauncher implements ConsoleModelBasedLauncher{
 	

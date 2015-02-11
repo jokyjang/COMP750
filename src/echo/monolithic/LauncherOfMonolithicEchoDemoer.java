@@ -1,9 +1,7 @@
 package echo.monolithic;
 
-import trace.echo.modular.ModularEchoTraceChecker;
 import bus.uigen.pipe.ConsoleModelBasedDemoerAndTester;
 import bus.uigen.pipe.DemoerAndTester;
-import bus.uigen.pipe.MainClassListLauncher;
 
 public class LauncherOfMonolithicEchoDemoer {
 	public static DemoerAndTester createOldDemoer(boolean anInteractive) {

@@ -1,13 +1,7 @@
 package echo.monolithic;
 
-import trace.echo.EchoTraceChecker;
-import trace.echo.modular.ModularEchoTraceChecker;
-import trace.echo.modular.EchoTracerSetter;
-import util.misc.ThreadSupport;
 import util.trace.console.ConsoleTraceSetter;
 import bus.uigen.pipe.ConsoleModelBasedDemoerAndTester;
-import bus.uigen.pipe.DemoerAndTester;
-import bus.uigen.pipe.MainClassListLauncher;
 
 public class LauncherOfMonolithicEchoCorrectLogGenerator extends LauncherOfMonolithicEchoDemoer{
 	public static ConsoleModelBasedDemoerAndTester createDemoer() {

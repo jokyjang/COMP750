@@ -1,20 +1,8 @@
 package echo.monolithic;
 
-import static im.IMUtililties.remoteEchoOf;
-import static util.pipe.ConsoleModelUtility.containsText;
-import static util.pipe.ConsoleModelUtility.getText;
-import static util.pipe.ConsoleModelUtility.isConsole;
-import static util.pipe.ConsoleModelUtility.isInfo;
-import static util.pipe.ConsoleModelUtility.isOutput;
-import static util.trace.session.SessionTraceUtility.clientJoined;
-import im.AHistoryInCoupler;
-import im.BobIM;
-
 import java.util.List;
 
 import trace.echo.EchoTraceChecker;
-import trace.echo.modular.ModularEchoTraceChecker;
-import trace.im.IMTraceChecker;
 import util.annotations.Tags;
 import util.misc.ThreadSupport;
 import util.pipe.ConsoleModel;
@@ -22,8 +10,6 @@ import util.tags.ApplicationTags;
 import util.trace.Traceable;
 import bus.uigen.pipe.ADemoerAndTester;
 import bus.uigen.pipe.DemoerAndTester;
-import bus.uigen.pipe.MainClassListLauncher;
-import bus.uigen.trace.TraceUtility;
 @Tags(ApplicationTags.ECHOER)
 public class AMonolithicEchoDemoerAndTester extends ADemoerAndTester implements DemoerAndTester{
 	protected ConsoleModel echoConsole;

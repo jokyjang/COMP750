@@ -4,8 +4,11 @@ import trace.echo.modular.EchoTracerSetter;
 import util.annotations.Tags;
 import util.tags.ApplicationTags;
 import util.tags.InteractiveTags;
-import util.trace.Tracer;
-
+/**
+ * Single User Single View (in the form of Echo)
+ * @author zhangzhx
+ *
+ */
 
 @Tags({ApplicationTags.ECHOER, InteractiveTags.COMPOSER})
 public class AnEchoComposerAndLauncher implements EchoerComposerAndLauncher{
@@ -52,9 +55,7 @@ public class AnEchoComposerAndLauncher implements EchoerComposerAndLauncher{
 		return interactor;
 	}
 	public static void traceUnawareLaunch(String[] args) {
-		(new AnEchoComposerAndLauncher()).composeAndLaunch(args);		
-
-		
+		(new AnEchoComposerAndLauncher()).composeAndLaunch(args);
 	}
 	public static void main (String[] args) {
 		EchoTracerSetter.traceEchoer();

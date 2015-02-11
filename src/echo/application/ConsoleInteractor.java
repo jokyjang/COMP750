@@ -1,6 +1,6 @@
-package echo.modular;
+package echo.application;
 
-public interface EchoerInteractor extends ListObserver {
+public interface ConsoleInteractor {
 //	public static final String ECHO_INDICATOR = EchoUtilities.ECHO_INDICATOR;
 //	public static final String QUIT = EchoUtilities.QUIT;
 //	public static final String HISTORY = EchoUtilities.HISTORY;

@@ -11,7 +11,7 @@ public class EchoUtilities {
 	public static final String ECHO_INDICATOR = "[Echo]";
 
 	/*
-	 * Utlity function for tester not used in this program but should probably be
+	 * Utility function for tester not used in this program but should probably be
 	 * in this class
 	 */
 	public static boolean isInput(String anInput) {
