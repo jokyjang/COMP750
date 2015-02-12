@@ -1,4 +1,4 @@
-package echo.modular;
+package echo.general;
 
 /**
  * A simple list module design of data structure list.
@@ -9,21 +9,11 @@ package echo.modular;
  */
 
 public interface SimpleList<ElementType> {
-	/**
-	 * Insert element `input' at the position `index'
-	 * @param index
-	 * @param input
-	 */
+	
 	void add(int index, ElementType input);
 
 	void add(ElementType input);
 
-	/**
-	 * Insert element `input' at the position `index' and notify
-	 * all the observers.
-	 * @param index
-	 * @param input
-	 */
 	void observableAdd(int index, ElementType input);
 
 	void observableAdd(ElementType input);
@@ -39,15 +29,9 @@ public interface SimpleList<ElementType> {
 	boolean observableRemove(ElementType anElement);
 	
 	ElementType observableRemove(int idx);
-	/**
-	 * Register observer `anObserver' to this list.
-	 * @param anObserver
-	 */
+	
 	void addObserver(ListObserver<ElementType> anObserver);
-	/**
-	 * Remove observer `anObserver' from the list.
-	 * @param anObserver
-	 */
+	
 	void removeObserver(ListObserver<ElementType> anObserver);
 
 }

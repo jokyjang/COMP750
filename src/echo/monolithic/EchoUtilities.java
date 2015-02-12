@@ -9,6 +9,9 @@ public class EchoUtilities {
 	public static final String QUIT = "quit";
 	public static final String HISTORY = "history";
 	public static final String ECHO_INDICATOR = "[Echo]";
+	public static final String TOPIC = "topic";
+	public static final String ADD = "add";
+	public static final String REMOVE = "remove";
 
 	/*
 	 * Utility function for tester not used in this program but should probably be

@@ -1,19 +1,26 @@
-package application.consolehistory;
+package application.consoletopic;
 
 import trace.echo.modular.EchoTracerSetter;
-import echo.modular.ASimpleList;
-import echo.modular.AnEchoComposerAndLauncher;
-import echo.modular.AnEchoInteractor;
-import echo.modular.EchoerInteractor;
-import echo.modular.SimpleList;
+import echo.general.ASimpleList;
+import echo.general.AnEchoComposerAndLauncher;
+import echo.general.AnEchoInteractor;
+import echo.general.EchoerInteractor;
+import echo.general.SimpleList;
+/**
+ * This class is to implement an application with Console as view and Topic as model.
+ * However, we cannot use EchoerInteractor in the echo.modular package directly as
+ * that class is expected to serve only ASimpleList\<String\> while in this case, we
+ * want it to serve ASimpleList\<Character\>. So we use echo.general instead.
+ * @author zhangzhx
+ *
+ */
 
-
-public class EchoModular {
-	protected SimpleList<String> history;	
+public class EchoGeneral {
+	protected SimpleList<Character> topic;	
 	protected EchoerInteractor interactor;	
 	protected void connectModelInteractor() {
 		interactor = createInteractor();
-		history.addObserver(interactor);
+		topic.addObserver(interactor);
 	}
 	public void composeAndLaunch(String[] args) {		
 		compose(args);
@@ -32,7 +39,7 @@ public class EchoModular {
 	}
 	// factory method
 	protected EchoerInteractor createInteractor() {
-		return new AnEchoInteractor(history);
+		return new AnEchoInteractor(topic);
 	}	
 	public void compose(String[] args) {
 		createModel();
@@ -42,11 +49,11 @@ public class EchoModular {
 		connectModelInteractor();
 	}
 	protected void createModel() {
-		history = createHistory();
+		topic = createHistory();
 	}
 	
 	public SimpleList<String> getHistory() {
-		return history;
+		return topic;
 	}
 	public EchoerInteractor getInteractor() {
 		return interactor;

@@ -1,24 +1,20 @@
-package application.consolehistory;
+package application.consoletopic;
 
-import trace.echo.modular.EchoTracerSetter;
 import echo.modular.ASimpleList;
-import echo.modular.AnEchoComposerAndLauncher;
-import echo.modular.AnEchoInteractor;
+import echo.modular.EchoerComposerAndLauncher;
 import echo.modular.EchoerInteractor;
 import echo.modular.SimpleList;
 
-
-public class EchoModular {
-	protected SimpleList<String> history;	
+public class EchoModular implements EchoerComposerAndLauncher{
+	protected SimpleList<Character> topic;	
 	protected EchoerInteractor interactor;	
 	protected void connectModelInteractor() {
 		interactor = createInteractor();
-		history.addObserver(interactor);
+		topic.addObserver(interactor);
 	}
 	public void composeAndLaunch(String[] args) {		
 		compose(args);
 		launch();
-		
 	}
 	protected void launchConsoleUI() {
 		interactor.doInput();
@@ -27,12 +23,12 @@ public class EchoModular {
 		launchConsoleUI();
 	}
 	// factory method
-	protected SimpleList<String> createHistory() {
+	protected SimpleList<Character> createTopic() {
 		return new ASimpleList();
 	}
 	// factory method
 	protected EchoerInteractor createInteractor() {
-		return new AnEchoInteractor(history);
+		return new AnEchoInteractor(topic);
 	}	
 	public void compose(String[] args) {
 		createModel();
@@ -42,23 +38,28 @@ public class EchoModular {
 		connectModelInteractor();
 	}
 	protected void createModel() {
-		history = createHistory();
+		topic = createTopic();
 	}
 	
-	public SimpleList<String> getHistory() {
-		return history;
+	public SimpleList<Character> getTopic() {
+		return topic;
 	}
 	public EchoerInteractor getInteractor() {
 		return interactor;
 	}
 	public static void traceUnawareLaunch(String[] args) {
-		(new AnEchoComposerAndLauncher()).composeAndLaunch(args);
+		(new EchoModular()).composeAndLaunch(args);
 	}
 	public static void main (String[] args) {
-		EchoTracerSetter.traceEchoer();
+		//EchoTracerSetter.traceEchoer();
 		// comment out if testing
 //		Tracer.showInfo(false); 
 //		(new AnEchoComposerAndLauncher()).composeAndLaunch(args);
 		traceUnawareLaunch(args);
+	}
+	@Override
+	public SimpleList<String> getHistory() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
