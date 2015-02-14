@@ -26,7 +26,7 @@ import echo.monolithic.EchoUtilities;
  */
 public class AnEchoInteractor implements EchoerInteractor {	
 	protected SimpleList<Character> topic;
-	public AnEchoInteractor(SimpleList<Character> aTopic) {
+	public AnEchoInteractor(SimpleList aTopic) {
 		topic = aTopic;
 	}
 	public void doInput() {

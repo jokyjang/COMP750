@@ -4,25 +4,19 @@ package echo.general;
  * removed.
  * @author zhangzhx
  *
- * @param <ElementType>
+ * @param <E>
  */
-public interface ListObserver<ElementType> {
+public interface ListObserver<E> {
 	/**
 	 * When an element `aNewValue' is added at the position `anIndex'.
 	 * @param anIndex
 	 * @param aNewValue
 	 */
-	void elementAdded(int anIndex, ElementType aNewValue);
+	void elementAdded(int anIndex, E aNewValue);
 	/**
 	 * 
 	 * @param anIndex
 	 * @param aNewValue
 	 */
-	void elementRemoved(int anIndex, ElementType aNewValue);
-	/**
-	 * When an element at position `anIndex' is removed from list.
-	 * @param anIndex
-	 * @return the removed element.
-	 */
-	//ElementType elementRemoved(int anIndex);
+	void elementRemoved(int anIndex, E aNewValue);
 }

@@ -5,33 +5,34 @@ package echo.general;
  * 
  * @author zhangzhx
  *
- * @param <ElementType>
+ * @param <E>
  */
 
-public interface SimpleList<ElementType> {
+public interface SimpleList<E> {
 	
-	void add(int index, ElementType input);
+	String getTag();	// identification for each model
+	
+	void add(int index, E input);
 
-	void add(ElementType input);
+	void add(E input);
 
-	void observableAdd(int index, ElementType input);
+	void observableAdd(int index, E input);
 
-	void observableAdd(ElementType input);
+	void observableAdd(E input);
 
 	int size();
 
-	ElementType get(int index);
+	E get(int index);
 	
-	ElementType remove(int anIndex);
+	E remove(int anIndex);
 
-	boolean remove(ElementType anElement);
+	boolean remove(E anElement);
 
-	boolean observableRemove(ElementType anElement);
-	
-	ElementType observableRemove(int idx);
-	
-	void addObserver(ListObserver<ElementType> anObserver);
-	
-	void removeObserver(ListObserver<ElementType> anObserver);
+	E observableRemove(int idx);
 
+	boolean observableRemove(E anElement);
+	
+	void addObserver(ListObserver<E> anObserver);
+	
+	void removeObserver(ListObserver<E> anObserver);
 }

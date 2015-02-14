@@ -1,15 +1,15 @@
 package application;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.TextField;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 public class IMUI extends JFrame{
 	private JTextField topic = null;
@@ -17,63 +17,31 @@ public class IMUI extends JFrame{
 	private JTextArea history = null;
 	private TextField message = null;
 	private JTextField awareMessage = null;
+	
+	private IMUIListener listener = null;
 
 	public IMUI() {
 		super("IMView");
-
+		init();
+	}
+	
+	public void setListener(IMUIListener l) {
+		listener = l;
+		this.topic.getDocument().addDocumentListener(listener.getTopicDocumentListener());
+		this.message.addActionListener(listener.getMessageActionListener());
+		this.awareMessage.addActionListener(listener.getAwareMessageActionListener());
+		this.awareMessage.getDocument().addDocumentListener(
+				listener.getAwareMessageDocumentListener());
+	}
+	
+	private void init() {
 		this.setSize(10, 100);
 		this.topic = new JTextField(20);
-		this.topic.getDocument().addDocumentListener(new DocumentListener() {
-
-			@Override
-			public void changedUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
-				hm.changeTopic(topic.getText());
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent arg0) {
-				// TODO Auto-generated method stub
-				//hm.changeTopic(topic.getText());
-			}
-			
-		});
 		
 		this.status = new JTextField(20);
 		this.status.setEditable(false);
 		this.message = new TextField(20);
-		this.message.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				String text = message.getText();
-            	hm.addNewLine("["+userName+"]: "+text);
-            	message.setText("");
-			}
-			
-		});
 		this.awareMessage = new JTextField(20);
-		this.awareMessage.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				String text = awareMessage.getText();
-            	hm.addNewLine("["+userName+"]: "+text);
-            	awareMessage.setText("");
-			}
-			
-		});
-		AwareDocumentListener adl = new AwareDocumentListener();
-		adl.start();
-		this.awareMessage.getDocument().addDocumentListener(adl);
 		
 		this.history = new JTextArea(10, 20);
 		this.history.setEditable(false);
@@ -96,74 +64,10 @@ public class IMUI extends JFrame{
 		comp.add(component);
 		comp.setBorder(border);
 
-		//this.add(Box.createRigidArea(new Dimension(0, 10)));
 		this.add(comp);
 	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		HistoryModel model = (HistoryModel)o;
-		HistoryModel.ChangeType type = (HistoryModel.ChangeType)arg;
-		switch(type) {
-			case ADD_NEW_LINE: {
-				history.append(model.getLastInput()+"\n");
-				break;
-			}
-			case CHANGE_TOPIC: {
-				if (!model.getTopicInput().equals(this.topic.getText())) {
-					this.topic.setText(model.getTopicInput());
-				}
-				break;
-			}
-			case SET_STATUS: {
-				status.setText(model.getStatus());
-				break;
-			}
-		}
-		
-	}
 	
-	private class AwareDocumentListener extends Thread implements DocumentListener {
-		private long lastModifiedTime = 0;
-		@Override
-		public void changedUpdate(DocumentEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public synchronized void insertUpdate(DocumentEvent arg0) {
-			// TODO Auto-generated method stub
-			hm.setStatus(userName + " is typing...");
-			this.lastModifiedTime = new Date().getTime();
-			notify();
-		}
-
-		@Override
-		public void removeUpdate(DocumentEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
-		public synchronized void run() {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			while (true) {
-				try {
-					wait(3000);
-					long currentTime = new Date().getTime();
-					if (currentTime - this.lastModifiedTime > 3000) {
-						hm.setStatus(userName + " has typed.");
-					}
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+	public static void main(String[] args) {
+		new IMUI();
 	}
 }
