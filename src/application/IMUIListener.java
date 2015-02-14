@@ -72,18 +72,6 @@ public interface IMUIListener {
 		
 	}*/
 	
-	/*new ActionListener() {
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			// TODO Auto-generated method stub
-			String text = message.getText();
-        	hm.addNewLine("["+userName+"]: "+text);
-        	message.setText("");
-		}
-		
-	}*/
-	
 	/*new DocumentListener() {
 
 		@Override

@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.BadLocationException;
 
 public class IMUI extends JFrame{
 	private JTextField topic = null;
@@ -69,5 +70,38 @@ public class IMUI extends JFrame{
 	
 	public static void main(String[] args) {
 		new IMUI();
+	}
+
+	public void setMessageText(String string) {
+		// TODO Auto-generated method stub
+		message.setText(string);
+	}
+	
+	public String getMessageText() {
+		return message.getText();
+	}
+
+	public void appendToHistory(String aNewValue) {
+		// TODO Auto-generated method stub
+		history.append(aNewValue);
+	}
+
+	public String getAwareMessageText() {
+		// TODO Auto-generated method stub
+		return awareMessage.getText();
+	}
+	
+	public void setAwareMessageText(String string) {
+		// TODO Auto-generated method stub
+		awareMessage.setText(string);
+	}
+	
+	public void insertToTopic(int anIndex, Character aValue) {
+		String text = topic.getText();
+		topic.setText(text.substring(0, anIndex) + aValue + text.substring(anIndex));
+	}
+	public void removeFromTopic(int anIndex, int to) {
+		String text = topic.getText();
+		topic.setText(text.substring(0, anIndex) + text.substring(to));
 	}
 }

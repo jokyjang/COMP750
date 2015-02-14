@@ -1,8 +1,8 @@
 package application.consoletopic;
 
-import trace.echo.modular.EchoTracerSetter;
 import echo.general.ASimpleList;
 import echo.general.AnConsoleInteractor;
+import echo.general.AnUIInteractor;
 import echo.general.EchoerComposerAndLauncher;
 import echo.general.EchoerInteractor;
 import echo.general.HistoryObserver;
@@ -20,17 +20,21 @@ import echo.general.TopicObserver;
 public class EchoGeneral extends EchoerComposerAndLauncher {
 	protected SimpleList<Character> topic;
 	protected SimpleList<String> history;
-	protected EchoerInteractor interactor;
+	protected EchoerInteractor console;
+	protected EchoerInteractor ui;
 	
 	protected void launchConsoleUI() {
-		interactor.start();
+		ui.start();
+		console.start();
 	}
 	public void launch() {
 		launchConsoleUI();
 	}
 	// factory method
 	public void createInteractor() {
-		interactor = new AnConsoleInteractor(topic, history);
+		//interactor = new AnConsoleInteractor(topic, history);
+		ui = new AnUIInteractor(topic, history);
+		console = new AnConsoleInteractor(topic, history);
 	}	
 	
 	public void createModel() {
@@ -45,7 +49,7 @@ public class EchoGeneral extends EchoerComposerAndLauncher {
 		return topic;
 	}
 	public EchoerInteractor getInteractor() {
-		return interactor;
+		return console;
 	}
 	public static void traceUnawareLaunch(String[] args) {
 		(new EchoGeneral()).composeAndLaunch(args);
@@ -60,7 +64,9 @@ public class EchoGeneral extends EchoerComposerAndLauncher {
 	@Override
 	public void connectModelAndInteractor() {
 		// TODO Auto-generated method stub
-		topic.addObserver(new TopicObserver(interactor));
-		history.addObserver(new HistoryObserver(interactor));
+		topic.addObserver(new TopicObserver(console));
+		history.addObserver(new HistoryObserver(console));
+		topic.addObserver(new TopicObserver(ui));
+		history.addObserver(new HistoryObserver(ui));
 	}
 }
