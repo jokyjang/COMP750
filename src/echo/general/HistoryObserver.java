@@ -1,16 +1,16 @@
 package echo.general;
 
 public class HistoryObserver implements ListObserver<String> {
-	private EchoerInteractor echoer;
+	private HistoryInteractor history;
 	
-	public HistoryObserver(EchoerInteractor e) {
-		echoer = e;
+	public HistoryObserver(HistoryInteractor e) {
+		history = e;
 	}
 
 	@Override
 	public void elementAdded(int anIndex, String aNewValue) {
 		// TODO Auto-generated method stub
-		echoer.addedToHistory(anIndex, aNewValue);
+		history.addedToHistory(anIndex, aNewValue);
 	}
 
 	@Override

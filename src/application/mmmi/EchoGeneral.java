@@ -1,9 +1,12 @@
-package application.consoletopic;
+package application.mmmi;
 
 import echo.general.ASimpleList;
+import echo.general.AnConsoleInteractor;
+import echo.general.AnUIInteractor;
 import echo.general.EchoerComposerAndLauncher;
+import echo.general.EchoerInteractor;
+import echo.general.HistoryObserver;
 import echo.general.SimpleList;
-import echo.general.TopicEchoerInteractor;
 import echo.general.TopicObserver;
 /**
  * This class is to implement an application with Console as view and Topic as model.
@@ -16,9 +19,12 @@ import echo.general.TopicObserver;
 
 public class EchoGeneral extends EchoerComposerAndLauncher {
 	protected SimpleList<Character> topic;
-	protected TopicEchoerInteractor console;
+	protected SimpleList<String> history;
+	protected EchoerInteractor console;
+	protected EchoerInteractor ui;
 	
 	protected void launchConsoleUI() {
+		ui.start();
 		console.start();
 	}
 	public void launch() {
@@ -27,16 +33,22 @@ public class EchoGeneral extends EchoerComposerAndLauncher {
 	// factory method
 	public void createInteractor() {
 		//interactor = new AnConsoleInteractor(topic, history);
-		console = new AnTopicEchoerInteractor(topic);
+		ui = new AnUIInteractor(topic, history);
+		console = new AnConsoleInteractor(topic, history);
 	}	
 	
 	public void createModel() {
 		topic = new ASimpleList<Character>("TOPIC");
+		history = new ASimpleList<String>("HISTORY");
+	}
+	
+	public SimpleList<String> getHistory() {
+		return history;
 	}
 	public SimpleList<Character> getTopic() {
 		return topic;
 	}
-	public TopicEchoerInteractor getInteractor() {
+	public EchoerInteractor getInteractor() {
 		return console;
 	}
 	public static void traceUnawareLaunch(String[] args) {
@@ -53,5 +65,8 @@ public class EchoGeneral extends EchoerComposerAndLauncher {
 	public void connectModelAndInteractor() {
 		// TODO Auto-generated method stub
 		topic.addObserver(new TopicObserver(console));
+		history.addObserver(new HistoryObserver(console));
+		topic.addObserver(new TopicObserver(ui));
+		history.addObserver(new HistoryObserver(ui));
 	}
 }

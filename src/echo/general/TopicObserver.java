@@ -1,22 +1,21 @@
 package echo.general;
 
 public class TopicObserver implements ListObserver<Character> {
-	private EchoerInteractor echoer;
+	private TopicInteractor topic;
 	
-	public TopicObserver(EchoerInteractor e) {
-		echoer = e;
+	public TopicObserver(TopicInteractor e) {
+		topic = e;
 	}
 
 	@Override
 	public void elementAdded(int anIndex, Character aNewValue) {
 		// TODO Auto-generated method stub
-		echoer.addedToTopic(anIndex, aNewValue);
+		topic.addedToTopic(anIndex, aNewValue);
 	}
 
 	@Override
 	public void elementRemoved(int anIndex, Character aNewValue) {
 		// TODO Auto-generated method stub
-		echoer.removedFromTopic(anIndex, aNewValue);
+		topic.removedFromTopic(anIndex, aNewValue);
 	}
-
 }

@@ -1,11 +1,5 @@
 package echo.general;
 
-import static echo.monolithic.EchoUtilities.ADD;
-import static echo.monolithic.EchoUtilities.REMOVE;
-import static echo.monolithic.EchoUtilities.TOPIC;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import trace.echo.ListEditDisplayed;
@@ -17,7 +11,7 @@ import util.tags.ApplicationTags;
 import util.tags.InteractiveTags;
 
 @Tags({ApplicationTags.ECHOER, InteractiveTags.INTERACTOR})
-public class AnConsoleInteractor implements EchoerInteractor {
+public class AnConsoleInteractor extends EchoerInteractor {
 	public static final String QUIT = "quit";
 	public static final String HISTORY = "history";
 	public static final String ECHO_INDICATOR = "[Echo]";

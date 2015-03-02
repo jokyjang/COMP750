@@ -1,4 +1,4 @@
-package echo.general;
+package application.uihistory;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,14 +8,15 @@ import javax.swing.event.DocumentListener;
 
 import application.IMUI;
 import application.IMUIListener;
+import echo.general.HistoryEchoerInteractor;
+import echo.general.SimpleList;
 
-public class AnUIInteractor extends EchoerInteractor implements IMUIListener{
-	private SimpleList<Character> topic = null;
+public class AnHistoryUIInteractor extends HistoryEchoerInteractor 
+		implements IMUIListener {
 	private SimpleList<String> history = null;
 	private IMUI ui = null;
-	public AnUIInteractor(SimpleList<Character> t, SimpleList<String> h) {
+	public AnHistoryUIInteractor(SimpleList<String> h) {
 		// TODO Auto-generated constructor stub
-		topic = t;
 		history = h;
 	}
 
@@ -26,35 +27,9 @@ public class AnUIInteractor extends EchoerInteractor implements IMUIListener{
 	}
 
 	@Override
-	public void addedToTopic(int anIndex, Character aNewValue) {
-		// TODO Auto-generated method stub
-		ui.insertToTopic(anIndex, aNewValue);
-	}
-
-	@Override
-	public void removedFromTopic(int anIndex, Character aNewValue) {
-		// TODO Auto-generated method stub
-		ui.removeFromTopic(anIndex, anIndex+1);
-	}
-
-	@Override
 	public void processAddToHistory(String aNewValue) {
 		// TODO Auto-generated method stub
 		history.observableAdd(aNewValue);
-	}
-
-	@Override
-	public void processAddToTopic(int anIndex, Character aNewValue) {
-		// TODO Auto-generated method stub
-		topic.observableAdd(anIndex, aNewValue);
-	}
-
-	@Override
-	public void processRemoveFromTopic(int from, int to) {
-		// TODO Auto-generated method stub
-		for(int i = to; i >= from; --i) {
-			topic.observableRemove(i);
-		}
 	}
 
 	@Override
@@ -93,18 +68,7 @@ public class AnUIInteractor extends EchoerInteractor implements IMUIListener{
 		@Override
 		public void insertUpdate(DocumentEvent e) {
 			// TODO Auto-generated method stub
-			/*
-			try {
-				int offset = e.getOffset();
-				int length = e.getLength();
-				String text = e.getDocument().getText(offset, length);
-				for(int i = offset; i < offset+length; ++i) {
-					processAddToTopic(i, text.charAt(i-offset));
-				}
-			} catch (BadLocationException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}*/
+			
 		}
 
 		@Override
@@ -141,4 +105,5 @@ public class AnUIInteractor extends EchoerInteractor implements IMUIListener{
 		}
 
 	}
+
 }
