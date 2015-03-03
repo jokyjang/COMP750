@@ -4,11 +4,12 @@ import trace.echo.modular.EchoTracerSetter;
 import echo.modular.ASimpleList;
 import echo.modular.AnEchoComposerAndLauncher;
 import echo.modular.AnEchoInteractor;
+import echo.modular.EchoerComposerAndLauncher;
 import echo.modular.EchoerInteractor;
 import echo.modular.SimpleList;
 
 
-public class EchoModular {
+public class EchoModular implements EchoerComposerAndLauncher {
 	protected SimpleList<String> history;	
 	protected EchoerInteractor interactor;	
 	protected void connectModelInteractor() {
