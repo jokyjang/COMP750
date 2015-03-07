@@ -2,7 +2,6 @@ package im;
 
 import util.tags.DistributedTags;
 import bus.uigen.pipe.AConsoleModelBasedLauncher;
-import bus.uigen.pipe.MainClassLaunchingUtility;
 
 public class ALauncherOfIM extends AConsoleModelBasedLauncher implements LauncherOfIM {
 	
