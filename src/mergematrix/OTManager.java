@@ -79,7 +79,7 @@ public class OTManager {
 					localOp.getOperationName(), localOp.getIndex(),
 					localOp.getElement(), localTs.getLocal(),
 					localTs.getRemote(), userName, isServer, this);
-			localOp = transformII(localOp, remoteOp);
+			localOp = transformOP(localOp, remoteOp);
 			LocalEditCountIncremented.newCase(localOp.getList(), 
 					localOp.getOperationName(), localOp.getIndex(),
 					localOp.getElement(), localTs.getLocal(),
