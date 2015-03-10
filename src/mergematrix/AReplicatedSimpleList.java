@@ -17,8 +17,8 @@ public class AReplicatedSimpleList<T> extends ASimpleList<T>
 	Communicator communicator;
 	List<ListObserver<T>> replicatingObservers = new ArrayList();
 
-	public AReplicatedSimpleList(Communicator theCommunicator, String theTag) {
-		super(theTag);
+	public AReplicatedSimpleList(Communicator theCommunicator, String tracingTag) {
+		super(tracingTag);
 		communicator = theCommunicator;
 	}
 	public synchronized void replicatedAdd(T anElement) {
@@ -37,7 +37,7 @@ public class AReplicatedSimpleList<T> extends ASimpleList<T>
 				listEdit.getList(),
 			AddressedSentMessageInfo.OTHERS, this);
 		communicator.toOthers(listEdit);
-		this.notifyRemove(replicatingObservers, index, val);
+		//this.notifyRemove(replicatingObservers, index, val);
 	}
 	
 	public synchronized void replicatedAdd(int anIndex, T anElement) {
@@ -53,9 +53,15 @@ public class AReplicatedSimpleList<T> extends ASimpleList<T>
 			AddressedSentMessageInfo.OTHERS, this);
 		communicator.toOthers(listEdit);
 //		notifyReplicatingObservers(normalizedIndex(anIndex), anElement);
-		notifyReplicatingObservers(anIndex, anElement);
+		//notifyReplicatingObservers(anIndex, anElement);
 	}
 	public void notifyReplicatingObservers(int index, T newValue) {
 		notifyAdd(replicatingObservers, index, newValue);
+	}
+	
+	@Override
+	public String getClientName() {
+		// TODO Auto-generated method stub
+		return this.communicator.getClientName();
 	}
 }

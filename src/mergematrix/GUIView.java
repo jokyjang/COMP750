@@ -1,19 +1,20 @@
 package mergematrix;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 public class GUIView extends JFrame{
-	//private HistoryModel hm;
-	//private final String userName;
 	private JTextField topic = null;
 	private JTextField status = null;
 	private JTextArea history = null;
@@ -23,26 +24,23 @@ public class GUIView extends JFrame{
 	private GuiEditorInteractor editorInter = null;
 	
 	public GUIView(GuiIMInteractor imListener, GuiEditorInteractor editorListener) {
+		this();
+		this.setIMInter(imListener);
+		this.setEditInter(editorListener);
+	}
+	
+	public GUIView() {
 		super("IMView");
-		this.editorInter = editorListener;
-		this.IMinter = imListener;
-		if(this.editorInter != null) this.editorInter.setGUI(this);
-		if(this.IMinter != null) this.IMinter.setGUI(this);
 
 		this.setSize(10, 100);
 		this.topic = new JTextField(20);
-		this.topic.getDocument().addDocumentListener(this.editorInter);
-		
 		this.status = new JTextField(20);
 		this.status.setEditable(false);
 		this.message = new JTextField(20);
-		this.message.addActionListener(this.IMinter);
 		this.awareMessage = new JTextField(20);
-		this.awareMessage.addActionListener(this.IMinter);
 		//AwareDocumentListener adl = new AwareDocumentListener();
 		//adl.start();
-		this.IMinter.start();
-		this.awareMessage.getDocument().addDocumentListener(this.IMinter);
+		//this.IMinter.start();
 		
 		this.history = new JTextArea(10, 20);
 		this.history.setEditable(false);
@@ -61,12 +59,23 @@ public class GUIView extends JFrame{
 				// TODO Auto-generated method stub
 				history.setText("");
 			}
-			
 		});
 		this.add(clearOff);
 		this.addCompForBorder("Aware Message", this.awareMessage);
 		this.addCompForBorder("Message", this.message);
 		this.pack();
+	}
+	
+	public void setIMInter(GuiIMInteractor anIMInteractor) {
+		this.IMinter = anIMInteractor;
+		this.message.addActionListener(this.IMinter);
+		this.awareMessage.addActionListener(this.IMinter);
+		this.awareMessage.getDocument().addDocumentListener(this.IMinter);
+	}
+	
+	public void setEditInter(GuiEditorInteractor anEditorInteractor) {
+		this.editorInter = anEditorInteractor;
+		this.topic.getDocument().addDocumentListener(this.editorInter);
 	}
 
 	void addCompForBorder(String title, Component component) {
@@ -115,5 +124,9 @@ public class GUIView extends JFrame{
 	public String getStatus() {
 		// TODO Auto-generated method stub
 		return this.status.getText();
+	}
+	
+	public static void main(String[] args) {
+		new GUIView().setVisible(true);
 	}
 }

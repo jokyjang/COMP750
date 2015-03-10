@@ -7,8 +7,8 @@ import util.session.CommunicatorSelector;
 import util.session.PeerMessageListener;
 
 public class AListInCoupler<ElementType> implements PeerMessageListener {
-	protected SimpleList<ElementType> list;
-	public AListInCoupler(SimpleList<ElementType> theEchoer) {
+	protected ReplicatedSimpleList<ElementType> list;
+	public AListInCoupler(ReplicatedSimpleList<ElementType> theEchoer) {
 		list = theEchoer;
 	}
 	public void objectReceived(Object message, String userName) {

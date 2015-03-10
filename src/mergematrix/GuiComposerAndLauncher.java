@@ -20,11 +20,11 @@ import javax.swing.event.ChangeListener;
 import util.session.Communicator;
 import util.session.CommunicatorSelector;
 import util.session.MessageFilterCreator;
+import util.session.PeerMessageListener;
 import util.session.ReceivedMessage;
 import util.session.ReceivedMessageFilterSelector;
 import util.session.SentMessage;
 import util.session.SentMessageFilterSelector;
-import util.session.SessionMessageListener;
 
 public class GuiComposerAndLauncher {
 	private Communicator comm;
@@ -48,22 +48,37 @@ public class GuiComposerAndLauncher {
 				.setMessageFilterCreator(receivedMessageQueuerCreator);
 		
 		comm = this.createCommunicator(args);
-		
-		//comm.addSessionMessageListener(otManager);
-		GuiIMComposerAndLauncher imCAL = 
-				new GuiIMComposerAndLauncher(comm);
-		imCAL.compose();
-		GuiEditorComposerAndLauncher editorCAL = 
-				new GuiEditorComposerAndLauncher(comm);
-		editorCAL.compose();
+		GUIView viewer = new GUIView();
+		composeIM(viewer);
+		composeEditor(viewer);
 		comm.join();
 
-		ps = new ParameterSetter();
-		ps.setVisible(true);
-		GUIView viewer = new GUIView((GuiIMInteractor) imCAL.getInteractor(),
-				(GuiEditorInteractor) editorCAL.getInteractor());
 		viewer.setVisible(true);
-		imCAL.launch();
+		ps = new ParameterSetter();
+		ps.setVisible(true);	
+	}
+	
+	private void composeIM(GUIView view) {
+		ReplicatedSimpleList<String> history = 
+				new AReplicatedSimpleList<String>(comm, ApplicationTags.IM);
+		GuiIMInteractor historyInter = new GuiIMInteractor(history);
+		history.addObserver(historyInter);
+		PeerMessageListener historyInCoupler = new AListInCoupler<String>(history);
+		comm.addPeerMessageListener(historyInCoupler);
+		view.setIMInter(historyInter);
+		historyInter.setGUI(view);
+		historyInter.start();
+	}
+	
+	private void composeEditor(GUIView view) {
+		ReplicatedSimpleList<Character> topic = 
+				new AReplicatedSimpleList<Character>(comm, ApplicationTags.EDITOR);
+		GuiEditorInteractor topicInter = new GuiEditorInteractor(topic);
+		topic.addObserver(topicInter);
+		PeerMessageListener topicInCoupler = new AListInCoupler<Character>(topic);
+		comm.addPeerMessageListener(topicInCoupler);
+		view.setEditInter(topicInter);
+		topicInter.setGUI(view);
 	}
 
 	private void setDelay(int minDelay, int delayVariation) {
@@ -92,12 +107,6 @@ public class GuiComposerAndLauncher {
 		return CommunicatorSelector.getCommunicator(args[0], args[1], args[2],
 				args[3]);
 	}
-
-	/*
-	public SessionMessageListener getSessionAwarenesManager() {
-		return otManagers;
-	}
-	*/
 
 	private class ParameterSetter extends JFrame {
 		private int minDelay = 0;

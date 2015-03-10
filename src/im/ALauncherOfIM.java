@@ -22,8 +22,8 @@ public class ALauncherOfIM extends AConsoleModelBasedLauncher implements Launche
 		};
 	}
 	public Class sessionManagerClass() {
-		return SessionManagerServerStarter.class;
-		// return OTSessionManagerServerStarter.class;
+		//return SessionManagerServerStarter.class;
+		return im.SessionManagerServerStarter.class;
 
 	}
 	public String sessionManagerName() {

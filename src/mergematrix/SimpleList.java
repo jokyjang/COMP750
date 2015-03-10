@@ -17,6 +17,8 @@ public interface SimpleList<ElementType> {
 	ElementType get(int index);
 
 	void addObserver(ListObserver<ElementType> anObserver);
+	
+	void removeObserver(ListObserver<ElementType> anObserver);
 
 	ElementType remove(int anIndex);
 
@@ -25,6 +27,7 @@ public interface SimpleList<ElementType> {
 	ElementType observableRemove(int index);
 	
 	boolean observableRemove(ElementType anElement);
-
+	
 	String getTracingTag();
+
 }

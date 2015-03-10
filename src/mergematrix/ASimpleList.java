@@ -104,11 +104,10 @@ public class ASimpleList<ElementType> implements SimpleList<ElementType> {
 	}
 	
 	public void notifyAdd(int index, ElementType newValue) {
-
 		notifyAdd(observers, index, newValue);
 	}
+	
 	public void notifyRemove(int index, ElementType newValue) {
-
 		notifyRemove(observers, index, newValue);
 	}
 	
@@ -116,8 +115,9 @@ public class ASimpleList<ElementType> implements SimpleList<ElementType> {
 		return tracingTag;
 	}
 
+	@Override
 	public void removeObserver(ListObserver<ElementType> anObserver) {
 		// TODO Auto-generated method stub
-		
+		observers.remove(anObserver);
 	}
 }

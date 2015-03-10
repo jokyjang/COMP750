@@ -26,14 +26,11 @@ public class GuiIMInteractor extends Thread
 		implements ListObserver, DocumentListener, ActionListener {
 	private GUIView viewer = null;
 	protected ReplicatedSimpleList<String> history;
-	protected Communicator communicator;
-	protected String userName;
+	private String userName = null;
 	
-	public GuiIMInteractor(ReplicatedSimpleList<String> aHistory, 
-			Communicator aCommunicator, String aUserName) {
+	public GuiIMInteractor(ReplicatedSimpleList<String> aHistory) {
 		history = aHistory;
-		communicator = aCommunicator;
-		userName = aUserName;
+		userName = aHistory.getClientName();
 	}	
 	
 	public void setGUI(GUIView imView) {
@@ -48,11 +45,10 @@ public class GuiIMInteractor extends Thread
 	}
 	protected void processQuit() {
 		System.out.println("Quitting application");
-		communicator.leave();
 	}
 	
 	protected String computeFeedback(String anInput) {
-		return IMUtililties.remoteEcho(anInput, communicator.getClientName());
+		return IMUtililties.remoteEcho(anInput, userName);
 	}
 //	protected void displayOutput(String newValue) {
 //		System.out.println(EchoUtilities.echo(newValue));
@@ -74,21 +70,20 @@ public class GuiIMInteractor extends Thread
 		System.out.println(allHistory.toString());
 	}
 	
-	
+	@Override
 	public void elementAdded(int anIndex, Object aNewValue) {
 		ListEditObserved.newCase(OperationName.ADD, anIndex, aNewValue, ApplicationTags.IM, this);
 		displayOutput(history.get(anIndex));
 		ListEditDisplayed.newCase(OperationName.ADD, anIndex, aNewValue, ApplicationTags.IM, this);
-
 	}
 	
-	
+	@Override
 	public void elementRemoved(int anIndex, Object aNewValue) {
 		// TODO Auto-generated method stub
 		
 	}
 	
-	
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if (!(e.getSource() instanceof JTextField)) {
@@ -109,20 +104,26 @@ public class GuiIMInteractor extends Thread
 		
 	private long lastModifiedTime = 0;
 
-	
+	@Override
 	public synchronized void insertUpdate(DocumentEvent arg0) {
 		// TODO Auto-generated method stub
-		// hm.setStatus(userName + " is typing...");
 		this.lastModifiedTime = new Date().getTime();
 		this.viewer.setStatus(this.userName + " is typing!");
 		notify();
 	}
 
-	
+	@Override
 	public void removeUpdate(DocumentEvent arg0) {
 		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
 	public synchronized void run() {
 		try {
 			wait();
@@ -137,7 +138,6 @@ public class GuiIMInteractor extends Thread
 					if(!this.viewer.getStatus().equals("")) {
 						this.viewer.setStatus(this.userName + " has typed!");
 					}
-					// hm.setStatus(userName + " has typed.");
 				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -145,16 +145,12 @@ public class GuiIMInteractor extends Thread
 			}
 		}
 	}
-
-	
-	public void changedUpdate(DocumentEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	
 	public void doInput() {
 		// TODO Auto-generated method stub
+		
+		this.start();
+		
 		for (;;) {
 			System.out.println(EchoUtilities.PROMPT);
 			Scanner scanner = new Scanner(System.in);

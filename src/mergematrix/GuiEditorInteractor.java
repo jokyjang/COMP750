@@ -1,7 +1,5 @@
 package mergematrix;
 
-import im.IMUtililties;
-
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -11,8 +9,6 @@ import trace.echo.ListEditDisplayed;
 import trace.echo.ListEditInput;
 import trace.echo.modular.ListEditObserved;
 import trace.echo.modular.OperationName;
-import util.session.Communicator;
-import util.tags.ApplicationTags;
 import echo.modular.ListObserver;
 
 public class GuiEditorInteractor implements ListObserver, DocumentListener {
@@ -21,12 +17,9 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 	private boolean displaySelf = true;
 	private boolean listenChange = true;
 	protected ReplicatedSimpleList<Character> topic;
-	protected Communicator communicator;
 
-	public GuiEditorInteractor(ReplicatedSimpleList<Character> aTopic,
-			Communicator aCommunicator) {
+	public GuiEditorInteractor(ReplicatedSimpleList<Character> aTopic) {
 		topic = aTopic;
-		communicator = aCommunicator;
 	}
 
 	public void setGUI(GUIView imView) {
@@ -45,16 +38,7 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 
 	protected void processQuit() {
 		System.out.println("Quitting application");
-		communicator.leave();
 	}
-
-	protected String computeFeedback(String anInput) {
-		return IMUtililties.remoteEcho(anInput, communicator.getClientName());
-	}
-
-	// protected void displayOutput(String newValue) {
-	// System.out.println(EchoUtilities.echo(newValue));
-	// }
 
 	protected void processInsert(int index, Character anInput) {
 		//String aFeedback = computeFeedback(anInput);
@@ -76,16 +60,15 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 			sb.append(this.topic.get(i));
 		}
 		listenChange = false;
-		this.viewer.setTopic(sb.toString());
+		if(viewer == null) {
+			System.out.println("[Topic]: " + sb.toString());
+		} else {
+			this.viewer.setTopic(sb.toString());
+		}
 		listenChange = true;
-		//this.viewer.appendHistory( sb.toString() + "\n");
-		//System.out.println(sb.toString());
-		//if (this.viewer.getTopic().equalsIgnoreCase(newValue))
-		//	return;
-		//this.viewer.setTopic(newValue);
 	}
 
-	
+	@Override
 	public void elementAdded(int anIndex, Object aNewValue) {
 		ListEditObserved.newCase(OperationName.ADD, anIndex, aNewValue,
 				ApplicationTags.EDITOR, this);
@@ -94,7 +77,7 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 				ApplicationTags.EDITOR, this);
 	}
 
-	
+	@Override
 	public void elementRemoved(int anIndex, Object aNewValue) {
 		// TODO Auto-generated method stub
 		ListEditObserved.newCase(OperationName.DELETE, anIndex, aNewValue,
@@ -104,7 +87,7 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 				ApplicationTags.EDITOR, this);
 	}
 
-	
+	@Override
 	public void insertUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
 		//System.out.println("listener listenerChange: "+listenChange+" displaySelf: "+displaySelf);
@@ -124,7 +107,7 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 		}
 	}
 
-	
+	@Override
 	public void removeUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
 		if(!listenChange) return;
@@ -135,13 +118,9 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 		}
 	}
 
-	
+	@Override
 	public void changedUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
-
-	}
-	
-	public void doInput() {
 		
 	}
 }
