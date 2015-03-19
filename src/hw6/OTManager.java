@@ -1,9 +1,11 @@
-package mergematrix;
+package hw6;
 
 import im.ListEdit;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.management.OperationsException;
 
 import trace.echo.modular.OperationName;
 import trace.ot.InitialOTTimeStampCreated;
@@ -58,7 +60,7 @@ public class OTManager {
 		return isServer;
 	}
 	
-	public ListEdit transform(ListEdit remoteOp, TimeStamp remoteTs) {	
+	public ListEdit transform(ListEdit remoteOp, TimeStamp remoteTs) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
 		List<OTMessage> toBeRemoved = new ArrayList<OTMessage>();
 		for(OTMessage otMessage : buffer) {
@@ -77,7 +79,7 @@ public class OTManager {
 					localOp.getOperationName(), localOp.getIndex(),
 					localOp.getElement(), localTs.getLocal(),
 					localTs.getRemote(), userName, isServer, this);
-			localOp = transformOP(localOp, remoteOp);
+			localOp = transformII(localOp, remoteOp);
 			LocalEditCountIncremented.newCase(localOp.getList(), 
 					localOp.getOperationName(), localOp.getIndex(),
 					localOp.getElement(), localTs.getLocal(),
@@ -114,8 +116,8 @@ public class OTManager {
 	
 	private ListEdit transformDD(ListEdit remoteOp, ListEdit localOp) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
-		//System.out.println(remoteOp.toString());
-		//System.out.println(localOp.toString());
+		System.out.println(remoteOp.toString());
+		System.out.println(localOp.toString());
 		if((remoteOp.getIndex() > localOp.getIndex())
 				|| (remoteOp.getIndex() == localOp.getIndex() && isServer())) {
 			newOp.setIndex(remoteOp.getIndex() - 1);

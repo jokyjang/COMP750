@@ -1,4 +1,4 @@
-package mergematrix;
+package hw6;
 
 import im.ListEdit;
 
@@ -21,6 +21,7 @@ public class SentMessageFilter implements MessageFilter<SentMessage> {
 	}
 
 	public void filterMessage(SentMessage msg) {
+		// TODO Auto-generated method stub
 		if(msg.isUserMessage() && isOTEnabled()) {
 			ListEdit listEdit = (ListEdit) msg.getUserMessage();
 			OTManager otManager = otManagers.get(listEdit.getList());
@@ -33,14 +34,13 @@ public class SentMessageFilter implements MessageFilter<SentMessage> {
 					(TimeStamp)Misc.deepCopy(timeStamp), listEdit);
 			msg.setUserMessage(otMessage);
 			messageProcessor.processMessage(msg);
-			
-			TimeStamp.printAll("Sent Message", timeStamp, listEdit);
-			
+			System.out.println(listEdit.getList() + ","+listEdit.getOperationName()+","
+					+ listEdit.getIndex() + "," + listEdit.getElement() + ","+
+					otManager.getUserName()+","+msg.getSendingUser());
 			OTListEditSent.newCase(listEdit.getList(), listEdit.getOperationName(), 
 					listEdit.getIndex(), listEdit.getElement(),
 					timeStamp.getLocal(), timeStamp.getRemote(), 
 					otManager.getUserName(), this);
-					
 			otManager.addToBuffer(otMessage);
 			OTListEditBuffered.newCase(listEdit.getList(), listEdit.getOperationName(), 
 					listEdit.getIndex(), listEdit.getElement(),

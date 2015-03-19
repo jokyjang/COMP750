@@ -1,4 +1,4 @@
-package mergematrix;
+package hw6;
 
 import trace.ot.OTTracerSetter;
 import util.annotations.Tags;
@@ -19,7 +19,7 @@ public class SessionManagerServerStarter {
 	public static void main (String[] args) {
 		Tracer.setImplicitPrintKeywordKind(ImplicitKeywordKind.OBJECT_CLASS_NAME);
 		Tracer.setMessagePrefixKind(MessagePrefixKind.FULL_CLASS_NAME);
-		Tracer.showInfo(false);
+		Tracer.showInfo(true);
 		OTTracerSetter.traceOT();
 		Tracer.setKeywordPrintStatus(ServerClientJoined.class, true);
 

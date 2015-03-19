@@ -1,6 +1,4 @@
-package mergematrix;
-
-import im.ListEdit;
+package hw6;
 
 import java.io.Serializable;
 
@@ -35,15 +33,5 @@ public class TimeStamp implements Serializable {
 	public boolean isConcurrent(TimeStamp theOther) {
 		return (local != theOther.getRemote()) && 
 				(remote != theOther.getLocal());
-	}
-	
-	public String toString() {
-		return "["+Integer.toString(local)+","+Integer.toString(remote)+"]";
-	}
-	
-	public static void printAll(String prefix, TimeStamp ts, ListEdit le) {
-		System.out.print("<"+prefix+">: " + ts.toString() + " ");
-		System.out.println(le.getList() + ","+le.getOperationName()+","
-				+ le.getIndex() + "," + le.getElement());
 	}
 }

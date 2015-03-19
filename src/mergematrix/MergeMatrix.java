@@ -1,7 +1,5 @@
 package mergematrix;
 
-import java.util.List;
-
 import trace.echo.modular.OperationName;
 
 public interface MergeMatrix {

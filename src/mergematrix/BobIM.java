@@ -16,7 +16,7 @@ import util.trace.Tracer;
 public class BobIM implements ExampleIMSession{
 	public static final String USER_NAME = DistributedTags.CLIENT_2;
 	public static void main (String[] args) {
-		Tracer.showInfo(true);
+		Tracer.showInfo(false);
 		OTTracerSetter.traceOT();
 		
 		new GuiComposerAndLauncher().composeAndLaunch(SESSION_SERVER_HOST, SESSION_NAME,

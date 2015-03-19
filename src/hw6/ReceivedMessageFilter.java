@@ -1,4 +1,4 @@
-package mergematrix;
+package hw6;
 
 import im.ListEdit;
 
@@ -31,14 +31,10 @@ public class ReceivedMessageFilter
 			OTMessage otMessage = (OTMessage) msg.getUserMessage();
 			TimeStamp remoteTs = otMessage.getTimeStamp().flip();
 			ListEdit remoteOp = (ListEdit) otMessage.getMessage();
-			
-			TimeStamp.printAll("Received Message", remoteTs, remoteOp);
-			
-			/*OTListEditReceived.newCase(remoteOp.getList(), 
+			OTListEditReceived.newCase(remoteOp.getList(), 
 					remoteOp.getOperationName(), remoteOp.getIndex(), 
 					remoteOp.getElement(), remoteTs.getLocal(),
 					remoteTs.getRemote(), msg.getClientName(), this);
-					*/
 			OTManager otManager = otManagers.get(remoteOp.getList());
 			remoteOp = otManager.transform(remoteOp, remoteTs);
 			otManager.getTimeStamp().incRemote();

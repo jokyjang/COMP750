@@ -1,4 +1,4 @@
-package mergematrix;
+package hw6;
 
 import im.ListEdit;
 
@@ -27,9 +27,6 @@ public class OTServerFilter implements ServerMessageFilter {
 	    TimeStamp remoteTs = otMessage.getTimeStamp();
 	    ListEdit remoteOp = (ListEdit) otMessage.getMessage();
 	    OTManager otManager = otManagers.get(message.getSendingUser());
-	    
-	    TimeStamp.printAll("Server BT", remoteTs, remoteOp);
-	    
 	    remoteOp = otManager.transform(remoteOp, remoteTs);
 	    for (String user : otManagers.keySet()) {
 	      if (!user.equals(message.getSendingUser())) {
@@ -38,8 +35,6 @@ public class OTServerFilter implements ServerMessageFilter {
 	        TimeStamp tm = otm.getTimeStamp();
 	        tm.incLocal();
 	        OTMessage m = new OTMessage((TimeStamp) Misc.deepCopy(tm), remoteOp);
-	        TimeStamp.printAll("Server AT", tm, remoteOp);
-	        System.out.println("+---------------------------------------------+");
 	        unicast.setUserMessage(m);
 	        messageProcessor.processMessage(unicast);
 	        otm.addToBuffer(m);

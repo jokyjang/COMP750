@@ -1,4 +1,4 @@
-package mergematrix;
+package hw6;
 
 import im.ExampleIMSession;
 import trace.causal.CausalTracerSetter;
@@ -15,7 +15,7 @@ import util.trace.Tracer;
 public class AliceIM implements ExampleIMSession{
 	public static final String USER_NAME = DistributedTags.CLIENT_1;
 	public static void main (String[] args) {
-		Tracer.showInfo(false);
+		Tracer.showInfo(true);
 		OTTracerSetter.traceOT();
 		new GuiComposerAndLauncher().composeAndLaunch(SESSION_SERVER_HOST, SESSION_NAME,
 				USER_NAME, Communicator.RELAYED);
