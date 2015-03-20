@@ -33,8 +33,8 @@ public class TimeStamp implements Serializable {
 		return new TimeStamp(remote, local);
 	}
 	public boolean isConcurrent(TimeStamp theOther) {
-		return (local != theOther.getRemote()) && 
-				(remote != theOther.getLocal());
+		return (local > theOther.getRemote()) && 
+				(remote < theOther.getLocal());
 	}
 	
 	public String toString() {

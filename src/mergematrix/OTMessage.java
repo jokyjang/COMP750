@@ -18,4 +18,8 @@ public class OTMessage implements Serializable{
 	public Object getMessage() {
 		return message;
 	}
+	
+	public void setMessage(Object newMsg) {
+		message = newMsg;
+	}
 }

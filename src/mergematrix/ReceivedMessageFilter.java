@@ -26,15 +26,14 @@ public class ReceivedMessageFilter
 	
 	public void filterMessage(ReceivedMessage msg) {
 		// TODO Auto-generated method stub
-		//System.out.println("ReceiveMessageFilter.filterMessage: " + msg.toString());
 		if(msg.isUserMessage() && isOTEnabled()) {
 			OTMessage otMessage = (OTMessage) msg.getUserMessage();
-			TimeStamp remoteTs = otMessage.getTimeStamp().flip();
+			TimeStamp remoteTs = otMessage.getTimeStamp();
 			ListEdit remoteOp = (ListEdit) otMessage.getMessage();
 			
 			TimeStamp.printAll("Received Message", remoteTs, remoteOp);
-			
-			/*OTListEditReceived.newCase(remoteOp.getList(), 
+			/*
+			OTListEditReceived.newCase(remoteOp.getList(), 
 					remoteOp.getOperationName(), remoteOp.getIndex(), 
 					remoteOp.getElement(), remoteTs.getLocal(),
 					remoteTs.getRemote(), msg.getClientName(), this);
@@ -43,6 +42,7 @@ public class ReceivedMessageFilter
 			remoteOp = otManager.transform(remoteOp, remoteTs);
 			otManager.getTimeStamp().incRemote();
 			msg.setUserMessage(remoteOp);
+			TimeStamp.printAll("Trnsd Rcved Mse", otManager.getTimeStamp(), remoteOp);
 			messageProcessor.processMessage(msg);
 		} else {
 			messageProcessor.processMessage(msg);

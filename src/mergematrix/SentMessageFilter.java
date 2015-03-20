@@ -36,16 +36,17 @@ public class SentMessageFilter implements MessageFilter<SentMessage> {
 			
 			TimeStamp.printAll("Sent Message", timeStamp, listEdit);
 			
-			OTListEditSent.newCase(listEdit.getList(), listEdit.getOperationName(), 
+			/*OTListEditSent.newCase(listEdit.getList(), listEdit.getOperationName(), 
 					listEdit.getIndex(), listEdit.getElement(),
 					timeStamp.getLocal(), timeStamp.getRemote(), 
 					otManager.getUserName(), this);
-					
+					*/
 			otManager.addToBuffer(otMessage);
-			OTListEditBuffered.newCase(listEdit.getList(), listEdit.getOperationName(), 
+			/*OTListEditBuffered.newCase(listEdit.getList(), listEdit.getOperationName(), 
 					listEdit.getIndex(), listEdit.getElement(),
 					timeStamp.getLocal(), timeStamp.getRemote(), 
 					otManager.getUserName(), this);
+					*/
 		} else {
 			messageProcessor.processMessage(msg);
 		}
