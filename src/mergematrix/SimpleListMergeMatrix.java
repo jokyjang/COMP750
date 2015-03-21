@@ -66,4 +66,21 @@ public class SimpleListMergeMatrix implements MergeMatrix {
 		return policies;
 	}
 
+	@Override
+	public void print() {
+		// TODO Auto-generated method stub
+		OperationName[] operations = getAllOperations();
+		for(int i = 0; i < operations.length; ++i) {
+			System.out.print("\t" + operations[i]);
+		}
+		System.out.println();
+		for(int i = 0; i < operations.length; ++i) {
+			System.out.print(operations[i]);
+			for(int j = 0; j < operations.length; ++j) {
+				System.out.print("\t" + get(operations[i], operations[j]));
+			}
+			System.out.println();
+		}
+	}
+
 }

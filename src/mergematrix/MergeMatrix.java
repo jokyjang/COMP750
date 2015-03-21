@@ -18,5 +18,7 @@ public interface MergeMatrix {
 	OperationName[] getAllOperations();
 	
 	MergePolicy[] getAllPolicies();
+	
+	void print();
 
 }

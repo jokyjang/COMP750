@@ -18,6 +18,7 @@ public class OTManager {
 	private String userName;
 	private TimeStamp timeStamp;
 	private List<OTMessage> buffer;
+	private MergeMatrix mergeMatrix;
 	
 	public OTManager(String un, boolean is) {
 		enabled = false;
@@ -28,6 +29,7 @@ public class OTManager {
 				timeStamp.getLocal(), timeStamp.getRemote(), 
 				is, this);
 		buffer = new ArrayList<OTMessage>();
+		mergeMatrix = new SimpleListMergeMatrix();
 	}
 	
 	public TimeStamp getTimeStamp() {
@@ -101,6 +103,7 @@ public class OTManager {
 	 * @return
 	 */
 	private ListEdit transformOP(ListEdit remoteOp, ListEdit localOp, boolean remote) {
+		System.out.println("transformOP" + mergeMatrix.get(OperationName.ADD, OperationName.ADD));
 		if(remoteOp.getOperationName().equals(OperationName.ADD)
 				&& localOp.getOperationName().equals(OperationName.ADD)) {
 			return transformII(remoteOp, localOp, remote);
@@ -142,12 +145,28 @@ public class OTManager {
 	// transform insertion operation with respect to insertion
 	private ListEdit transformII(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
+		System.out.println("transformII" + mergeMatrix.get(OperationName.ADD, OperationName.ADD));
 		if((remoteOp.getIndex() > localOp.getIndex())) {
 			newOp.setIndex(remoteOp.getIndex() + 1);
 		} else if (remoteOp.getIndex() == localOp.getIndex()) {
-			newOp.setOperationName(OperationName.DELETE);
-			newOp.setIndex(remoteOp.getIndex());
-			newOp.setElement(localOp.getElement());
+			System.out.println(mergeMatrix.get(OperationName.ADD, OperationName.ADD));
+			switch(mergeMatrix.get(OperationName.ADD, OperationName.ADD)) {
+			case NONE:
+				newOp.setOperationName(OperationName.DELETE);
+				newOp.setIndex(remoteOp.getIndex());
+				newOp.setElement(localOp.getElement());
+				break;
+			case SERVER:
+				break;
+			case CLIENT:
+				break;
+			case BOTH:
+			default:
+				if(!remote) {
+					newOp.setIndex(newOp.getIndex() + 1);
+				}
+				break;
+			}
 		}
 		return newOp;
 	}
@@ -161,5 +180,13 @@ public class OTManager {
 			newOp.setOperationName(OperationName.REPLACE);
 		}
 		return newOp;
+	}
+
+	public void setMergeMatrix(MergeMatrix aMergeMatrix) {
+		// TODO Auto-generated method stub
+		mergeMatrix = aMergeMatrix;
+		if(mergeMatrix == null) {
+			mergeMatrix = new SimpleListMergeMatrix();
+		}
 	}
 }
