@@ -10,7 +10,6 @@ import util.tags.ApplicationTags;
 import util.tags.DistributedTags;
 import util.trace.Tracer;
 
-
 @Tags({DistributedTags.CLIENT_2, DistributedTags.CAUSAL})
 
 public class BobIM implements ExampleIMSession{

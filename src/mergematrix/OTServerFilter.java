@@ -5,6 +5,7 @@ import im.ListEdit;
 import java.util.HashMap;
 import java.util.Map;
 
+import trace.echo.modular.OperationName;
 import util.Misc;
 import util.session.ASentMessage;
 import util.session.MessageProcessor;
@@ -21,53 +22,36 @@ public class OTServerFilter implements ServerMessageFilter {
 		otManagers = new HashMap<String, OTManager>();
 	}
 	
-//	public void filterMessage(SentMessage message) {
-//		// TODO Auto-generated method stub
-//		OTMessage otMessage = (OTMessage) message.getUserMessage();
-//	    TimeStamp remoteTs = otMessage.getTimeStamp();
-//	    ListEdit remoteOp = (ListEdit) otMessage.getMessage();
-//	    OTManager otManager = otManagers.get(message.getSendingUser());
-//	    
-//	    TimeStamp.printAll("Server BT", remoteTs, remoteOp);
-//	    
-//	    remoteOp = otManager.transform(remoteOp, remoteTs);
-//	    for (String user : otManagers.keySet()) {
-//	      if (!user.equals(message.getSendingUser())) {
-//	        SentMessage unicast = ASentMessage.toSpecificUser(message, user);
-//	        OTManager otm = otManagers.get(user);
-//	        TimeStamp tm = otm.getTimeStamp();
-//	        tm.incLocal();
-//	        OTMessage m = new OTMessage((TimeStamp) Misc.deepCopy(tm), remoteOp);
-//	        TimeStamp.printAll("Server AT", tm, remoteOp);
-//	        System.out.println("+---------------------------------------------+");
-//	        unicast.setUserMessage(m);
-//	        messageProcessor.processMessage(unicast);
-//	        otm.addToBuffer(m);
-//	      }
-//	    }
-//	}
-	
 	public void filterMessage(SentMessage message) {
 		// TODO Auto-generated method stub
-		OTMessage otMessage = (OTMessage) message.getUserMessage();
-	    TimeStamp remoteTs = otMessage.getTimeStamp();
-	    ListEdit remoteOp = (ListEdit) otMessage.getMessage();
-	    OTManager otManager = otManagers.get(message.getSendingUser());
-	    otManager.getTimeStamp().incRemote();
-	    
-	    remoteOp = otManager.transform(remoteOp, remoteTs);
-	    for (String user : otManagers.keySet()) {
-	      if (!user.equals(message.getSendingUser())) {
-	        SentMessage unicast = ASentMessage.toSpecificUser(message, user);
-	        OTManager otm = otManagers.get(user);
-	        TimeStamp localTs = otm.getTimeStamp();
-	        localTs.incLocal();
-	        OTMessage m = new OTMessage((TimeStamp) Misc.deepCopy(localTs), remoteOp);
-	        unicast.setUserMessage(m);
-	        messageProcessor.processMessage(unicast);
-	        otm.addToBuffer(m);
-	      }
-	    }
+		if(message.getUserMessage() instanceof OTMessage) {
+			OTMessage otMessage = (OTMessage) message.getUserMessage();
+		    TimeStamp remoteTs = otMessage.getTimeStamp();
+		    ListEdit remoteOp = (ListEdit) otMessage.getMessage();
+		    OTManager otManager = otManagers.get(message.getSendingUser());
+		    otManager.getMergeMatrix().print();
+		    otManager.getTimeStamp().incRemote();
+		    
+		    remoteOp = otManager.transform(remoteOp, remoteTs);
+		    for (String user : otManagers.keySet()) {
+		      if (!user.equals(message.getSendingUser())) {
+		        SentMessage unicast = ASentMessage.toSpecificUser(message, user);
+		        OTManager otm = otManagers.get(user);
+		        TimeStamp localTs = otm.getTimeStamp();
+		        localTs.incLocal();
+		        OTMessage m = new OTMessage((TimeStamp) Misc.deepCopy(localTs), remoteOp);
+		        unicast.setUserMessage(m);
+		        messageProcessor.processMessage(unicast);
+		        otm.addToBuffer(m);
+		      }
+		    }
+		}
+	}
+	
+	public void setMergePolicy(OperationName a, OperationName b, MergePolicy p) {
+		for(OTManager otm : otManagers.values()) {
+			otm.setMergePolicy(a, b, p);
+		}
 	}
 
 	public void setMessageProcessor(MessageProcessor<SentMessage> arg0) {

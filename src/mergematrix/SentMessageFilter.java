@@ -21,7 +21,8 @@ public class SentMessageFilter implements MessageFilter<SentMessage> {
 	}
 
 	public void filterMessage(SentMessage msg) {
-		if(msg.isUserMessage() && isOTEnabled()) {
+		if(msg.isUserMessage() && isOTEnabled() &&
+				msg.getUserMessage() instanceof ListEdit) {
 			ListEdit listEdit = (ListEdit) msg.getUserMessage();
 			OTManager otManager = otManagers.get(listEdit.getList());
 			TimeStamp timeStamp = otManager.getTimeStamp();
@@ -48,6 +49,9 @@ public class SentMessageFilter implements MessageFilter<SentMessage> {
 					otManager.getUserName(), this);
 					*/
 		} else {
+			if(msg.getUserMessage() instanceof MergePolicyEdit) {
+				System.out.println("I've sent an MergePolicyEdit message!");
+			}
 			messageProcessor.processMessage(msg);
 		}
 	}

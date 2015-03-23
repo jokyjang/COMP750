@@ -25,10 +25,21 @@ public class OTServerFilters implements ServerMessageFilter {
 
 	public void filterMessage(SentMessage message) {
 		// TODO Auto-generated method stub
-		if(message.isUserMessage() && message.getUserMessage() instanceof OTMessage) {
-			OTMessage otm = (OTMessage)message.getUserMessage();
-			String tag = ((ListEdit)otm.getMessage()).getList();
+		if(!message.isUserMessage()) {
+			messageProcessor.processMessage(message);
+			return;
+		}
+		if (message.getUserMessage() instanceof OTMessage) {
+			OTMessage otm = (OTMessage) message.getUserMessage();
+			String tag = ((ListEdit) otm.getMessage()).getList();
 			filters.get(tag).filterMessage(message);
+		} else if(message.getUserMessage() instanceof MergePolicyEdit) {
+			System.out.println("Server received an MergePolicyEdit!");
+			MergePolicyEdit mpe = (MergePolicyEdit) message.getUserMessage();
+			for(OTServerFilter serverFilter : filters.values()) {
+				serverFilter.setMergePolicy(mpe.getServer(), mpe.getClient(), mpe.getPolicy());
+			}
+			messageProcessor.processMessage(message);
 		} else {
 			messageProcessor.processMessage(message);
 		}

@@ -26,7 +26,8 @@ public class ReceivedMessageFilter
 	
 	public void filterMessage(ReceivedMessage msg) {
 		// TODO Auto-generated method stub
-		if(msg.isUserMessage() && isOTEnabled()) {
+		if(msg.isUserMessage() && isOTEnabled() &&
+				msg.getUserMessage() instanceof OTMessage) {
 			OTMessage otMessage = (OTMessage) msg.getUserMessage();
 			TimeStamp remoteTs = otMessage.getTimeStamp();
 			ListEdit remoteOp = (ListEdit) otMessage.getMessage();
@@ -45,6 +46,9 @@ public class ReceivedMessageFilter
 			TimeStamp.printAll("Trnsd Rcved Mse", otManager.getTimeStamp(), remoteOp);
 			messageProcessor.processMessage(msg);
 		} else {
+			if(msg.getUserMessage() instanceof MergePolicyEdit) {
+				System.out.println("I've received a MergePolicyEdit!");
+			}
 			messageProcessor.processMessage(msg);
 		}
 	}

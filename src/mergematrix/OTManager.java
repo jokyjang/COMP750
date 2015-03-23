@@ -60,6 +60,14 @@ public class OTManager {
 		return isServer;
 	}
 	
+	public MergeMatrix getMergeMatrix() {
+		return this.mergeMatrix;
+	}
+	
+	public void setMergePolicy(OperationName a, OperationName b, MergePolicy p) {
+		mergeMatrix.set(a, b, p);
+	}
+	
 	public ListEdit transform(ListEdit remoteOp, TimeStamp remoteTs) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
 		List<OTMessage> toBeRemoved = new ArrayList<OTMessage>();

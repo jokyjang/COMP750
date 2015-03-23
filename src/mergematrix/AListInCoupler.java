@@ -8,13 +8,24 @@ import util.session.PeerMessageListener;
 
 public class AListInCoupler<ElementType> implements PeerMessageListener {
 	protected ReplicatedSimpleList<ElementType> list;
-	public AListInCoupler(ReplicatedSimpleList<ElementType> theEchoer) {
+	ParameterSetter parameterSetter;
+	public AListInCoupler(ReplicatedSimpleList<ElementType> theEchoer,
+			ParameterSetter ps) {
 		list = theEchoer;
+		parameterSetter = ps;
 	}
 	public void objectReceived(Object message, String userName) {
 		// need for integration with RPC
 		if (message instanceof ListEdit)
 			processReceivedListEdit((ListEdit<ElementType>) message, userName);
+		else if(message instanceof MergePolicyEdit &&
+				list.getTracingTag().equalsIgnoreCase(ApplicationTags.IM)) {
+			System.out.println("PeerMessageListener received an MergePolicyEdit");
+			MergePolicyEdit mpe = (MergePolicyEdit) message;
+			if(parameterSetter == null) System.out.println("ParameterSetter is null!");
+			else System.out.println("ParameterSetter isnot null!");
+			parameterSetter.setMergePolicy(mpe.getServer(), mpe.getClient(), mpe.getPolicy());
+		}
 	}
 	protected void processReceivedListEdit (ListEdit<ElementType> aRemoteEdit, String aUserName) {
 		//if (!aRemoteEdit.getList().equals(ApplicationTags.IM))
