@@ -21,7 +21,7 @@ public class OTManager {
 	private MergeMatrix mergeMatrix;
 	
 	public OTManager(String un, boolean is) {
-		enabled = false;
+		enabled = true;
 		userName = un;
 		isServer = is;
 		timeStamp = new TimeStamp();
@@ -111,7 +111,6 @@ public class OTManager {
 	 * @return
 	 */
 	private ListEdit transformOP(ListEdit remoteOp, ListEdit localOp, boolean remote) {
-		System.out.println("transformOP" + mergeMatrix.get(OperationName.ADD, OperationName.ADD));
 		if(remoteOp.getOperationName().equals(OperationName.ADD)
 				&& localOp.getOperationName().equals(OperationName.ADD)) {
 			return transformII(remoteOp, localOp, remote);
