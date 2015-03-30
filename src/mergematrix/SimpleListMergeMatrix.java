@@ -15,7 +15,7 @@ public class SimpleListMergeMatrix implements MergeMatrix {
 		put(OperationName.ADD, OperationName.DELETE, MergePolicy.BOTH);
 		put(OperationName.ADD, OperationName.REPLACE, MergePolicy.BOTH);
 		put(OperationName.DELETE, OperationName.ADD, MergePolicy.BOTH);
-		put(OperationName.DELETE, OperationName.DELETE, MergePolicy.NONE);
+		put(OperationName.DELETE, OperationName.DELETE, MergePolicy.SERVER);
 		put(OperationName.DELETE, OperationName.REPLACE, MergePolicy.SERVER);
 		put(OperationName.REPLACE, OperationName.ADD, MergePolicy.BOTH);
 		put(OperationName.REPLACE, OperationName.DELETE, MergePolicy.CLIENT);

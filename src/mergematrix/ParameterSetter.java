@@ -142,7 +142,8 @@ public class ParameterSetter extends JFrame {
 		table.setColumnSelectionAllowed(false);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
-		table.setFillsViewportHeight(false);
+		//table.setFillsViewportHeight(false);
+		scrollPane.setPreferredSize(getMinimumSize());
 		this.add(scrollPane);
 	}
 	
@@ -220,9 +221,10 @@ public class ParameterSetter extends JFrame {
 	    public void setValueAt(Object value, int row, int col) {
 			mergeMatrix.set(operations[row], operations[col-1], (MergePolicy) value);
 			
-			System.out.println("set Value at " + row + ", " + col + ": " + value);
-			mergeMatrix.print();
+			//System.out.println("set Value at " + row + ", " + col + ": " + value);
+			//mergeMatrix.print();
 			
+			this.fireTableCellUpdated(row, col);
 			if(this.sentFromRemote) return;
 			MergePolicyEdit mergePolicyEdit = new MergePolicyEdit(
 					operations[row], operations[col-1], (MergePolicy)getValueAt(row, col));

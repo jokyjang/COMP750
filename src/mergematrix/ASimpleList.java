@@ -9,8 +9,6 @@ import trace.echo.modular.OperationName;
 import util.annotations.Tags;
 import util.tags.ApplicationTags;
 import util.tags.InteractiveTags;
-import echo.modular.ListObserver;
-import echo.modular.SimpleList;
 
 @Tags({ApplicationTags.HISTORY, InteractiveTags.MODEL})
 
@@ -29,22 +27,6 @@ public class ASimpleList<ElementType> implements SimpleList<ElementType> {
 		simpleList.add(simpleList.size(), anElement);
 	}
 	
-	public synchronized void observableAdd(int anIndex, ElementType anElement) {
-		add(anIndex, anElement);
-		notifyAdd(anIndex, anElement);
-	}
-	public void notifyAdd(List<ListObserver<ElementType>> observers, int index, ElementType newValue) {
-		ListEditNotified.newCase(OperationName.ADD, index, newValue, this.tracingTag, this);
-		for (ListObserver<ElementType> observer:observers)
-			observer.elementAdded(index, newValue);
-	}
-
-	protected void traceAdd(int anIndex, ElementType anElement) {
-		ListEditMade.newCase(OperationName.ADD, anIndex,anElement, this.tracingTag, this);
-	}
-	protected void traceRemove(int anIndex, ElementType anElement) {
-		ListEditMade.newCase(OperationName.DELETE, anIndex,anElement, this.tracingTag, this);
-	}
 	public synchronized void add(int anIndex, ElementType anElement) {
 		simpleList.add(anIndex, anElement);
 		traceAdd(anIndex, anElement);
@@ -64,14 +46,16 @@ public class ASimpleList<ElementType> implements SimpleList<ElementType> {
 		return true;		
 	}
 	
-	
-	public synchronized boolean observableRemove(ElementType anElement) {
-		int anIndex = simpleList.indexOf(anElement);
-		if (anIndex < 0)
-			return false;
-		observableRemove(anIndex);
-		return true;
-		
+	@Override
+	public synchronized ElementType replace(int anIndex, ElementType input) {
+		// TODO Auto-generated method stub
+		this.traceReplace(anIndex, input);
+		return simpleList.set(anIndex, input);
+	}
+
+	public synchronized void observableAdd(int anIndex, ElementType anElement) {
+		add(anIndex, anElement);
+		notifyAdd(anIndex, anElement);
 	}
 	
 	public synchronized void observableAdd(ElementType anElement) {
@@ -79,28 +63,25 @@ public class ASimpleList<ElementType> implements SimpleList<ElementType> {
 	}
 
 	public synchronized ElementType observableRemove(int anIndex) {
-		
 		ElementType retVal = remove(anIndex);
 		notifyRemove(anIndex, retVal);
 		return retVal;
 	}
 	
-	public int size() {
-		return simpleList.size() ;
+	public synchronized boolean observableRemove(ElementType anElement) {
+		int anIndex = simpleList.indexOf(anElement);
+		if (anIndex < 0)
+			return false;
+		observableRemove(anIndex);
+		return true;
 	}
 	
-	public ElementType get(int index) {
-		return simpleList.get(index);
-	}
-	
-	public void addObserver(ListObserver<ElementType> anObserver) {
-		observers.add(anObserver);
-	}
-
-	public void notifyRemove(List<ListObserver<ElementType>> observers, int index, ElementType newValue) {
-		ListEditNotified.newCase(OperationName.DELETE, index, newValue, this.tracingTag, this);
-		for (ListObserver<ElementType> observer:observers)
-			observer.elementRemoved(index, newValue);
+	@Override
+	public synchronized ElementType observableReplace(int anIndex, ElementType input) {
+		// TODO Auto-generated method stub
+		ElementType retVal = replace(anIndex, input);
+		notifyReplace(anIndex, input);
+		return retVal;
 	}
 	
 	public void notifyAdd(int index, ElementType newValue) {
@@ -111,13 +92,59 @@ public class ASimpleList<ElementType> implements SimpleList<ElementType> {
 		notifyRemove(observers, index, newValue);
 	}
 	
+	public void notifyReplace(int index, ElementType newValue) {
+		notifyReplace(observers, index, newValue);
+	}
+	
+	public void notifyAdd(List<ListObserver<ElementType>> observers, int index, ElementType newValue) {
+		ListEditNotified.newCase(OperationName.ADD, index, newValue, this.tracingTag, this);
+		for (ListObserver<ElementType> observer:observers)
+			observer.elementAdded(index, newValue);
+	}
+
+	public void notifyRemove(List<ListObserver<ElementType>> observers, int index, ElementType newValue) {
+		ListEditNotified.newCase(OperationName.DELETE, index, newValue, this.tracingTag, this);
+		for (ListObserver<ElementType> observer:observers)
+			observer.elementRemoved(index, newValue);
+	}
+	
+	public void notifyReplace(List<ListObserver<ElementType>> observers, int index, ElementType newValue) {
+		ListEditNotified.newCase(OperationName.REPLACE, index, newValue, this.tracingTag, this);
+		for (ListObserver<ElementType> observer:observers)
+			observer.elementReplaced(index, newValue);
+	}
+	
 	public String getTracingTag() {
 		return tracingTag;
+	}
+	
+	protected void traceAdd(int anIndex, ElementType anElement) {
+		ListEditMade.newCase(OperationName.ADD, anIndex,anElement, this.tracingTag, this);
+	}
+	protected void traceRemove(int anIndex, ElementType anElement) {
+		ListEditMade.newCase(OperationName.DELETE, anIndex,anElement, this.tracingTag, this);
+	}
+	protected void traceReplace(int anIndex, ElementType anElement) {
+		ListEditMade.newCase(OperationName.REPLACE, anIndex, anElement, this.tracingTag, this);
+	}
+
+	@Override
+	public void addObserver(ListObserver<ElementType> anObserver) {
+		// TODO Auto-generated method stub
+		this.observers.add(anObserver);
 	}
 
 	@Override
 	public void removeObserver(ListObserver<ElementType> anObserver) {
 		// TODO Auto-generated method stub
-		observers.remove(anObserver);
+		this.observers.remove(anObserver);
+	}
+	
+	public int size() {
+		return simpleList.size() ;
+	}
+	
+	public ElementType get(int index) {
+		return simpleList.get(index);
 	}
 }

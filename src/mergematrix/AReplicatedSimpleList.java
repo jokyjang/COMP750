@@ -10,7 +10,6 @@ import trace.echo.modular.OperationName;
 import trace.im.ListEditSent;
 import util.session.Communicator;
 import util.trace.session.AddressedSentMessageInfo;
-import echo.modular.ListObserver;
 
 public class AReplicatedSimpleList<T> extends ASimpleList<T>
 		implements ReplicatedSimpleList<T> {
@@ -24,20 +23,6 @@ public class AReplicatedSimpleList<T> extends ASimpleList<T>
 	public synchronized void replicatedAdd(T anElement) {
 		int anIndex = size();
 		replicatedAdd(anIndex, anElement);
-	}
-	public synchronized void replicatedRemove(int index) {
-		T val = super.observableRemove(index);
-		if (communicator == null) return;
-		ListEdit listEdit = new AListEdit<T>(OperationName.DELETE, index, val, tracingTag);
-		ListEditSent.newCase(
-				communicator.getClientName(),
-				listEdit.getOperationName(), 
-				listEdit.getIndex(), 
-				listEdit.getElement(), 
-				listEdit.getList(),
-			AddressedSentMessageInfo.OTHERS, this);
-		communicator.toOthers(listEdit);
-		//this.notifyRemove(replicatingObservers, index, val);
 	}
 	
 	public synchronized void replicatedAdd(int anIndex, T anElement) {
@@ -55,6 +40,38 @@ public class AReplicatedSimpleList<T> extends ASimpleList<T>
 //		notifyReplicatingObservers(normalizedIndex(anIndex), anElement);
 		//notifyReplicatingObservers(anIndex, anElement);
 	}
+	
+	public synchronized void replicatedRemove(int index) {
+		T val = super.observableRemove(index);
+		if (communicator == null) return;
+		ListEdit listEdit = new AListEdit<T>(OperationName.DELETE, index, val, tracingTag);
+		ListEditSent.newCase(
+				communicator.getClientName(),
+				listEdit.getOperationName(), 
+				listEdit.getIndex(), 
+				listEdit.getElement(), 
+				listEdit.getList(),
+			AddressedSentMessageInfo.OTHERS, this);
+		communicator.toOthers(listEdit);
+		//this.notifyRemove(replicatingObservers, index, val);
+	}
+	
+	@Override
+	public synchronized void replicatedReplace(int index, T newVal) {
+		// TODO Auto-generated method stub
+		T val = super.observableReplace(index, newVal);
+		if(communicator == null) return;
+		ListEdit listEdit = new AListEdit<T>(OperationName.REPLACE, index, val, tracingTag);
+		ListEditSent.newCase(
+				communicator.getClientName(),
+				listEdit.getOperationName(), 
+				listEdit.getIndex(), 
+				listEdit.getElement(), 
+				listEdit.getList(),
+			AddressedSentMessageInfo.OTHERS, this);
+		communicator.toOthers(listEdit);
+	}
+	
 	public void notifyReplicatingObservers(int index, T newValue) {
 		notifyAdd(replicatingObservers, index, newValue);
 	}

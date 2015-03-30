@@ -13,13 +13,12 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import echo.monolithic.EchoUtilities;
 import trace.echo.ListEditDisplayed;
 import trace.echo.ListEditInput;
 import trace.echo.modular.ListEditObserved;
 import trace.echo.modular.OperationName;
 import util.tags.ApplicationTags;
-import echo.modular.ListObserver;
-import echo.monolithic.EchoUtilities;
 
 public class GuiIMInteractor extends Thread
 		implements ListObserver, DocumentListener, ActionListener {
@@ -172,5 +171,11 @@ public class GuiIMInteractor extends Thread
 			stringBuilder.append((index == this.history.size() - 1)? "\n":", ");
 		}		
 		System.out.println(stringBuilder.toString());
+	}
+
+	@Override
+	public void elementReplaced(int anIndex, Object aNewValue) {
+		// TODO Auto-generated method stub
+		
 	}
 }

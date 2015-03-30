@@ -9,7 +9,6 @@ import trace.echo.ListEditDisplayed;
 import trace.echo.ListEditInput;
 import trace.echo.modular.ListEditObserved;
 import trace.echo.modular.OperationName;
-import echo.modular.ListObserver;
 
 public class GuiEditorInteractor implements ListObserver, DocumentListener {
 
@@ -28,12 +27,13 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 	}
 
 	protected void addToTopic(int index, Character newValue) {
-		// ((ReplicatedHistory) history).replicatedAdd(history.size(), newValue);
 		topic.replicatedAdd(index, newValue);
-		//topic.add(index, newValue);
 	}
 	protected void removeFromTopic(int index) {
 		topic.replicatedRemove(index);
+	}
+	protected void updateTopic(int index, Character newValue) {
+		topic.replicatedReplace(index, newValue);
 	}
 
 	protected void processQuit() {
@@ -48,6 +48,11 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 	protected void processRemove(int index) {
 		ListEditInput.newCase(OperationName.DELETE, index, topic.get(index), ApplicationTags.EDITOR, this);
 		removeFromTopic(index);
+	}
+	
+	protected void processReplace(int index, Character anInput) {
+		ListEditInput.newCase(OperationName.REPLACE, index, anInput, ApplicationTags.EDITOR, this);
+		updateTopic(index, anInput);
 	}
 
 	protected void displayOutput() {
@@ -88,6 +93,16 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 	}
 
 	@Override
+	public void elementReplaced(int anIndex, Object aNewValue) {
+		// TODO Auto-generated method stub
+		ListEditObserved.newCase(OperationName.REPLACE, anIndex, aNewValue,
+				ApplicationTags.EDITOR, this);
+		displayOutput();
+		ListEditDisplayed.newCase(OperationName.REPLACE, anIndex, aNewValue,
+				ApplicationTags.EDITOR, this);
+	}
+
+	@Override
 	public void insertUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
 		//System.out.println("listener listenerChange: "+listenChange+" displaySelf: "+displaySelf);
@@ -121,6 +136,17 @@ public class GuiEditorInteractor implements ListObserver, DocumentListener {
 	@Override
 	public void changedUpdate(DocumentEvent e) {
 		// TODO Auto-generated method stub
-		
+		if(!listenChange) return;
+		displaySelf = false;
+		int offset =  e.getOffset();
+		int length = e.getLength();
+		String document = "NULL";
+		try {
+			document = e.getDocument().getText(offset, length);
+		} catch (BadLocationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("Event: " + offset + ", " + length + ", " + document);
 	}
 }

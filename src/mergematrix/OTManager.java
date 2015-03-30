@@ -83,17 +83,17 @@ public class OTManager {
 			ListEdit localOp = (ListEdit) otMessage.getMessage();
 			if(!localTs.isConcurrent(remoteTs)) continue;
 			newOp = transformOP(remoteOp, localOp, !isServer());
-			TransformationResult.newCase(localOp.getList(), 
+			TransformationResult.newCase(localOp.getList(),
 					localOp.getOperationName(), localOp.getIndex(),
 					localOp.getElement(), localTs.getLocal(),
 					localTs.getRemote(), userName, isServer, this);
 			localOp = transformOP(localOp, remoteOp, isServer());
-			LocalEditCountIncremented.newCase(localOp.getList(), 
+			LocalEditCountIncremented.newCase(localOp.getList(),
 					localOp.getOperationName(), localOp.getIndex(),
 					localOp.getElement(), localTs.getLocal(),
 					localTs.getRemote(), userName, this);
 			localTs.incRemote();
-			LocalEditCountIncremented.newCase(localOp.getList(), 
+			LocalEditCountIncremented.newCase(localOp.getList(),
 					localOp.getOperationName(), localOp.getIndex(),
 					localOp.getElement(), localTs.getLocal(),
 					localTs.getRemote(), userName, this);
@@ -111,6 +111,8 @@ public class OTManager {
 	 * @return
 	 */
 	private ListEdit transformOP(ListEdit remoteOp, ListEdit localOp, boolean remote) {
+		if(remoteOp.getOperationName() == OperationName.NULL 
+				|| localOp.getOperationName() == OperationName.NULL) return remoteOp;
 		if(remoteOp.getOperationName().equals(OperationName.ADD)
 				&& localOp.getOperationName().equals(OperationName.ADD)) {
 			return transformII(remoteOp, localOp, remote);
@@ -123,27 +125,57 @@ public class OTManager {
 		} else if(remoteOp.getOperationName().equals(OperationName.DELETE)
 				&& localOp.getOperationName().equals(OperationName.ADD)) {
 			return transformDI(remoteOp, localOp, remote);
+		} else if(remoteOp.getOperationName().equals(OperationName.REPLACE)
+				&& localOp.getOperationName().equals(OperationName.ADD)) {
+			return transformRI(remoteOp, localOp, remote);
+		} else if (remoteOp.getOperationName().equals(OperationName.ADD)
+				&& localOp.getOperationName().equals(OperationName.REPLACE)) {
+			return transformIR(remoteOp, localOp, remote);
 		} else {
 			System.out.println(remoteOp.getOperationName() + ", " + localOp.getOperationName());
 			return (ListEdit) Misc.deepCopy(remoteOp);
 		}
 	}
 	
+	private ListEdit transformIR(ListEdit remoteOp, ListEdit localOp,
+			boolean remote) {
+		// TODO Auto-generated method stub
+		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
+		if(newOp.getIndex() == localOp.getIndex()) {
+			// TODO Handle when different merge policy
+			
+		}
+		return newOp;
+	}
+
+	private ListEdit transformRI(ListEdit remoteOp, ListEdit localOp,
+			boolean remote) {
+		// TODO Auto-generated method stub
+		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
+		if(localOp.getIndex() < newOp.getIndex()) {
+			newOp.setIndex(newOp.getIndex() + 1);
+		} else if(localOp.getIndex() == newOp.getIndex()) {
+			// TODO handle when different merge policy
+			newOp.setIndex(newOp.getIndex() + 1);
+		}
+		return newOp;
+	}
+
 	private ListEdit transformDI(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
-		if(remoteOp.getIndex() > localOp.getIndex()) {
-			newOp.setIndex(remoteOp.getIndex() + 1);
-		} else if(remoteOp.getIndex() == localOp.getIndex()) {
-			newOp.setIndex(remoteOp.getIndex() + 1);
+		if(newOp.getIndex() > localOp.getIndex()) {
+			newOp.setIndex(newOp.getIndex() + 1);
+		} else if(newOp.getIndex() == localOp.getIndex()) {
+			newOp.setIndex(newOp.getIndex() + 1);
 		}
 		return newOp;
 	}
 
 	private ListEdit transformID(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
-		if(remoteOp.getIndex() > localOp.getIndex()) {
-			newOp.setIndex(remoteOp.getIndex() - 1);
-		} else if(remoteOp.getIndex() == localOp.getIndex()) {
+		if(newOp.getIndex() > localOp.getIndex()) {
+			newOp.setIndex(newOp.getIndex() - 1);
+		} else if(newOp.getIndex() == localOp.getIndex()) {
 			
 		}
 		return newOp;
@@ -152,11 +184,10 @@ public class OTManager {
 	// transform insertion operation with respect to insertion
 	private ListEdit transformII(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
-		System.out.println("transformII" + mergeMatrix.get(OperationName.ADD, OperationName.ADD));
+		//System.out.println("transformII" + mergeMatrix.get(OperationName.ADD, OperationName.ADD));
 		if((remoteOp.getIndex() > localOp.getIndex())) {
 			newOp.setIndex(remoteOp.getIndex() + 1);
 		} else if (remoteOp.getIndex() == localOp.getIndex()) {
-			System.out.println(mergeMatrix.get(OperationName.ADD, OperationName.ADD));
 			switch(mergeMatrix.get(OperationName.ADD, OperationName.ADD)) {
 			case NONE:
 				newOp.setOperationName(OperationName.DELETE);
@@ -164,8 +195,12 @@ public class OTManager {
 				newOp.setElement(localOp.getElement());
 				break;
 			case SERVER:
+				if(remote) newOp.setOperationName(OperationName.REPLACE);
+				else newOp.setOperationName(OperationName.NULL);
 				break;
 			case CLIENT:
+				if(remote) newOp.setOperationName(OperationName.NULL);
+				else newOp.setOperationName(OperationName.REPLACE);
 				break;
 			case BOTH:
 			default:
@@ -180,11 +215,20 @@ public class OTManager {
 	
 	private ListEdit transformDD(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
-		if((remoteOp.getIndex() > localOp.getIndex())
-				|| (remoteOp.getIndex() == localOp.getIndex() && isServer())) {
+		if((newOp.getIndex() > localOp.getIndex())) {
 			newOp.setIndex(remoteOp.getIndex() - 1);
-		} else if(remoteOp.getIndex() == localOp.getIndex() && !isServer()) {
-			newOp.setOperationName(OperationName.REPLACE);
+		} else if(remoteOp.getIndex() == localOp.getIndex()) {
+			switch(mergeMatrix.get(OperationName.DELETE, OperationName.DELETE)) {
+			case NONE:
+				newOp.setOperationName(OperationName.ADD);
+				break;
+			case BOTH:
+			case SERVER:
+			case CLIENT:
+			default:
+				newOp.setOperationName(OperationName.NULL);
+				break;
+			}
 		}
 		return newOp;
 	}
