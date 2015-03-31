@@ -119,6 +119,9 @@ public class OTManager {
 		} else if(remoteOp.getOperationName().equals(OperationName.DELETE)
 				&& localOp.getOperationName().equals(OperationName.DELETE)) {
 			return transformDD(remoteOp, localOp, remote);
+		} else if(remoteOp.getOperationName().equals(OperationName.REPLACE)
+				&& localOp.getOperationName().equals(OperationName.REPLACE)) {
+			return transformRR(remoteOp, localOp, remote);
 		} else if(remoteOp.getOperationName().equals(OperationName.ADD)
 				&& localOp.getOperationName().equals(OperationName.DELETE)) {
 			return transformID(remoteOp, localOp, remote);
@@ -131,19 +134,108 @@ public class OTManager {
 		} else if (remoteOp.getOperationName().equals(OperationName.ADD)
 				&& localOp.getOperationName().equals(OperationName.REPLACE)) {
 			return transformIR(remoteOp, localOp, remote);
+		} else if (remoteOp.getOperationName().equals(OperationName.DELETE)
+				&& localOp.getOperationName().equals(OperationName.REPLACE)) {
+			return transformDR(remoteOp, localOp, remote);
+		} else if(remoteOp.getOperationName().equals(OperationName.REPLACE)
+				&& localOp.getOperationName().equals(OperationName.DELETE)) {
+			return transformRD(remoteOp, localOp, remote);
 		} else {
 			System.out.println(remoteOp.getOperationName() + ", " + localOp.getOperationName());
 			return (ListEdit) Misc.deepCopy(remoteOp);
 		}
 	}
 	
+	private ListEdit transformRD(ListEdit remoteOp, ListEdit localOp,
+			boolean remote) {
+		// TODO Auto-generated method stub
+		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
+		if(newOp.getIndex() > localOp.getIndex()) {
+			newOp.setIndex(newOp.getIndex() - 1);
+		} else if(newOp.getIndex() == localOp.getIndex()) {
+			switch(mergeMatrix.get(OperationName.REPLACE, OperationName.DELETE)) {
+			case NONE:
+				newOp.setOperationName(OperationName.ADD);
+				newOp.setElement(localOp.getElement());
+				break;
+			case SERVER:
+				if(remote) newOp.setOperationName(OperationName.ADD);
+				else newOp.setOperationName(OperationName.NULL);
+				break;
+			case BOTH:
+			case CLIENT:
+			default:
+				if(remote) newOp.setOperationName(OperationName.NULL);
+				else newOp.setOperationName(OperationName.ADD);
+				break;
+			}
+		}
+		return newOp;
+	}
+
+	private ListEdit transformDR(ListEdit remoteOp, ListEdit localOp,
+			boolean remote) {
+		// TODO Auto-generated method stub
+		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
+		if(newOp.getIndex() == localOp.getIndex()) {
+			switch(mergeMatrix.get(OperationName.DELETE, OperationName.REPLACE)) {
+			case NONE:
+				newOp.setOperationName(OperationName.REPLACE);
+				break;
+			case CLIENT:
+				if(remote) newOp.setOperationName(OperationName.NULL);
+				else newOp.setElement(localOp.getElement());
+				break;
+			case BOTH:
+			case SERVER:
+			default:
+				if(remote) newOp.setElement(localOp.getElement());
+				else newOp.setOperationName(OperationName.NULL);
+				break;
+			}
+		}
+		return newOp;
+	}
+
+	private ListEdit transformRR(ListEdit remoteOp, ListEdit localOp,
+			boolean remote) {
+		// TODO Auto-generated method stub
+		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
+		if(newOp.getIndex() == localOp.getIndex()) {
+			switch(mergeMatrix.get(OperationName.REPLACE, OperationName.REPLACE)) {
+			case CLIENT:
+				if(remote) newOp.setOperationName(OperationName.NULL);
+				else newOp.setElement(localOp.getElement());
+				break;
+			case NONE:
+			case BOTH:
+			case SERVER:
+			default:
+				if(remote) newOp.setElement(localOp.getElement());
+				else newOp.setOperationName(OperationName.NULL);
+				break;
+			}
+		}
+		return newOp;
+	}
+
 	private ListEdit transformIR(ListEdit remoteOp, ListEdit localOp,
 			boolean remote) {
 		// TODO Auto-generated method stub
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
 		if(newOp.getIndex() == localOp.getIndex()) {
 			// TODO Handle when different merge policy
-			
+			switch(mergeMatrix.get(OperationName.ADD, OperationName.REPLACE)) {
+			case NONE:
+				//TODO cannot accept none cause we don't know the original character
+				//break;
+			case BOTH:
+			case SERVER:
+			case CLIENT:
+			default:
+				// INSERTION: do nothing, no change
+				break;
+			}
 		}
 		return newOp;
 	}
@@ -156,7 +248,15 @@ public class OTManager {
 			newOp.setIndex(newOp.getIndex() + 1);
 		} else if(localOp.getIndex() == newOp.getIndex()) {
 			// TODO handle when different merge policy
-			newOp.setIndex(newOp.getIndex() + 1);
+			switch(mergeMatrix.get(OperationName.REPLACE, OperationName.ADD)) {
+			case NONE:
+			case SERVER:
+			case CLIENT:
+			case BOTH:
+			default:
+				newOp.setIndex(newOp.getIndex() + 1);
+				break;
+			}
 		}
 		return newOp;
 	}
@@ -166,7 +266,16 @@ public class OTManager {
 		if(newOp.getIndex() > localOp.getIndex()) {
 			newOp.setIndex(newOp.getIndex() + 1);
 		} else if(newOp.getIndex() == localOp.getIndex()) {
-			newOp.setIndex(newOp.getIndex() + 1);
+			switch(mergeMatrix.get(OperationName.DELETE, OperationName.ADD)) {
+			case NONE:
+				newOp.setElement(localOp.getElement());
+				break;
+			case SERVER:
+			case CLIENT:
+			case BOTH:
+			default:
+				newOp.setIndex(newOp.getIndex() + 1);
+			}
 		}
 		return newOp;
 	}
@@ -176,7 +285,17 @@ public class OTManager {
 		if(newOp.getIndex() > localOp.getIndex()) {
 			newOp.setIndex(newOp.getIndex() - 1);
 		} else if(newOp.getIndex() == localOp.getIndex()) {
-			
+			switch(mergeMatrix.get(OperationName.ADD, OperationName.DELETE)) {
+			case NONE:
+				newOp.setElement(localOp.getElement());
+				break;
+			case SERVER:
+			case CLIENT:
+			case BOTH:
+			default:
+				// DO NOTHING
+				break;
+			}
 		}
 		return newOp;
 	}
