@@ -17,25 +17,18 @@ public class AListInCoupler<ElementType> implements PeerMessageListener {
 	public void objectReceived(Object message, String userName) {
 		// need for integration with RPC
 		if (message instanceof ListEdit){
-			System.out.println("Hello world from " + userName);
 			processReceivedListEdit((ListEdit<ElementType>) message, userName);
 		}else if(message instanceof MergePolicyEdit &&
 				list.getTracingTag().equalsIgnoreCase(ApplicationTags.IM)) {
-			System.out.println("PeerMessageListener received an MergePolicyEdit");
+			//System.out.println("PeerMessageListener received an MergePolicyEdit");
 			MergePolicyEdit mpe = (MergePolicyEdit) message;
-			if(parameterSetter == null) System.out.println("ParameterSetter is null!");
-			else System.out.println("ParameterSetter isnot null!");
+			//if(parameterSetter == null) System.out.println("ParameterSetter is null!");
+			//else System.out.println("ParameterSetter is not null!");
 			parameterSetter.setMergePolicy(mpe.getServer(), mpe.getClient(), mpe.getPolicy());
 		}
 	}
 	protected void processReceivedListEdit (ListEdit<ElementType> aRemoteEdit, String aUserName) {
 		//if (!aRemoteEdit.getList().equals(ApplicationTags.IM))
-		ListEdit<ElementType> msg =  aRemoteEdit;
-		System.out.println(msg.getList());
-		System.out.println(msg.getOperationName());
-		System.out.println(msg.getElement());
-		System.out.println(msg.getIndex());
-		System.out.println(list.getTracingTag());
 		if (!aRemoteEdit.getList().equals(list.getTracingTag()))
 			return;
 		ListEditReceived.newCase(
@@ -61,7 +54,6 @@ public class AListInCoupler<ElementType> implements PeerMessageListener {
 		} else if(aRemoteEdit.getOperationName() == OperationName.REPLACE) {
 			list.observableReplace(aRemoteEdit.getIndex(), anInput);
 		}
-
 //		System.out.println(IMUtililties.remoteEcho(anInput, aUserName));
 	
 	}

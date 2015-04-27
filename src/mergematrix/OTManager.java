@@ -20,20 +20,29 @@ public class OTManager {
 	private List<OTMessage> buffer;
 	private MergeMatrix mergeMatrix;
 	
+	private List<OTMessage> mergePolicyBuffer;
+	private TimeStamp mergePolicyTimeStamp;
+	
 	public OTManager(String un, boolean is) {
 		enabled = true;
 		userName = un;
 		isServer = is;
 		timeStamp = new TimeStamp();
+		mergePolicyTimeStamp = new TimeStamp();
 		InitialOTTimeStampCreated.newCase(un, un, 
 				timeStamp.getLocal(), timeStamp.getRemote(), 
 				is, this);
 		buffer = new ArrayList<OTMessage>();
+		mergePolicyBuffer = new ArrayList<OTMessage>();
 		mergeMatrix = new SimpleListMergeMatrix();
 	}
 	
 	public TimeStamp getTimeStamp() {
 		return timeStamp;
+	}
+	
+	public TimeStamp getMergePolicyTimeStamp() {
+		return mergePolicyTimeStamp;
 	}
 	
 	public boolean isEnabled() {
@@ -54,6 +63,10 @@ public class OTManager {
 
 	public void addToBuffer(OTMessage msg) {
 		this.buffer.add(msg);
+	}
+	
+	public void addToMergePolicyBuffer(OTMessage msg) {
+		this.mergePolicyBuffer.add(msg);
 	}
 	
 	public boolean isServer() {
@@ -358,5 +371,64 @@ public class OTManager {
 		if(mergeMatrix == null) {
 			mergeMatrix = new SimpleListMergeMatrix();
 		}
+	}
+	
+	/******************************************************************************************
+	 * Below this line are code concerning MergePolicyEdit
+	 ******************************************************************************************/
+	/* 
+	 * @param remoteOp
+	 * @param remoteTs
+	 * @return
+	 */
+	public MergePolicyEdit transformMergePolicy(MergePolicyEdit remoteOp, TimeStamp remoteTs) {
+		MergePolicyEdit newOp = (MergePolicyEdit) Misc.deepCopy(remoteOp);
+		List<OTMessage> toBeRemoved = new ArrayList<OTMessage>();
+		for(OTMessage otMessage : mergePolicyBuffer) {
+			TimeStamp localTs = otMessage.getTimeStamp();
+			if(!localTs.isConcurrent(remoteTs)) {
+				toBeRemoved.add(otMessage);
+			}
+		}
+		mergePolicyBuffer.removeAll(toBeRemoved);
+		for(OTMessage otMessage : mergePolicyBuffer) {
+			TimeStamp localTs = otMessage.getTimeStamp();
+			MergePolicyEdit localOp = (MergePolicyEdit) otMessage.getMessage();
+			if(!localTs.isConcurrent(remoteTs)) continue;
+			newOp = transformMergePolicyOP(remoteOp, localOp, !isServer());
+//			TransformationResult.newCase(localOp.getList(),
+//					localOp.getOperationName(), localOp.getIndex(),
+//					localOp.getElement(), localTs.getLocal(),
+//					localTs.getRemote(), userName, isServer, this);
+			localOp = transformMergePolicyOP(localOp, remoteOp, isServer());
+//			LocalEditCountIncremented.newCase(localOp.getList(),
+//					localOp.getOperationName(), localOp.getIndex(),
+//					localOp.getElement(), localTs.getLocal(),
+//					localTs.getRemote(), userName, this);
+			localTs.incRemote();
+//			LocalEditCountIncremented.newCase(localOp.getList(),
+//					localOp.getOperationName(), localOp.getIndex(),
+//					localOp.getElement(), localTs.getLocal(),
+//					localTs.getRemote(), userName, this);
+			otMessage.setMessage(localOp);
+			remoteOp = newOp;
+		}
+		return newOp;
+	}
+	
+	/**
+	 * Transform remoteOp with respect to localOp
+	 * @param remoteOp	- remote operation
+	 * @param localOp	- local operation
+	 * @param remote	- remoteOp has higher priority
+	 * @return
+	 */
+	private MergePolicyEdit transformMergePolicyOP(MergePolicyEdit remoteOp, MergePolicyEdit localOp, boolean remote) {
+		MergePolicyEdit newOp = (MergePolicyEdit) Misc.deepCopy(remoteOp);
+		if(newOp.getServer().equals(localOp.getServer())
+				&& newOp.getClient().equals(localOp.getClient())) {
+			if(remote) newOp.setPolicy(localOp.getPolicy());
+		}
+		return newOp;
 	}
 }

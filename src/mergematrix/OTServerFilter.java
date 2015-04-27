@@ -24,12 +24,13 @@ public class OTServerFilter implements ServerMessageFilter {
 	
 	public void filterMessage(SentMessage message) {
 		// TODO Auto-generated method stub
-		if(message.getUserMessage() instanceof OTMessage) {
-			OTMessage otMessage = (OTMessage) message.getUserMessage();
+		if(!(message.getUserMessage() instanceof OTMessage)) return;
+		OTMessage otMessage = (OTMessage) message.getUserMessage();
+		if(otMessage.getMessage() instanceof ListEdit) {
 		    TimeStamp remoteTs = otMessage.getTimeStamp();
 		    ListEdit remoteOp = (ListEdit) otMessage.getMessage();
 		    OTManager otManager = otManagers.get(message.getSendingUser());
-		    otManager.getMergeMatrix().print();
+		    //otManager.getMergeMatrix().print();
 		    otManager.getTimeStamp().incRemote();
 		    
 		    remoteOp = otManager.transform(remoteOp, remoteTs);
@@ -43,6 +44,26 @@ public class OTServerFilter implements ServerMessageFilter {
 		        unicast.setUserMessage(m);
 		        messageProcessor.processMessage(unicast);
 		        otm.addToBuffer(m);
+		      }
+		    }
+		} else if(otMessage.getMessage() instanceof MergePolicyEdit) {
+		    TimeStamp remoteTs = otMessage.getTimeStamp();
+		    MergePolicyEdit remoteOp = (MergePolicyEdit) otMessage.getMessage();
+		    OTManager otManager = otManagers.get(message.getSendingUser());
+		    //otManager.getMergeMatrix().print();
+		    otManager.getTimeStamp().incRemote();
+		    
+		    remoteOp = otManager.transformMergePolicy(remoteOp, remoteTs);
+		    for (String user : otManagers.keySet()) {
+		      if (!user.equals(message.getSendingUser())) {
+		        SentMessage unicast = ASentMessage.toSpecificUser(message, user);
+		        OTManager otm = otManagers.get(user);
+		        TimeStamp localTs = otm.getTimeStamp();
+		        localTs.incLocal();
+		        OTMessage m = new OTMessage((TimeStamp) Misc.deepCopy(localTs), remoteOp);
+		        unicast.setUserMessage(m);
+		        messageProcessor.processMessage(unicast);
+		        otm.addToMergePolicyBuffer(m);
 		      }
 		    }
 		}

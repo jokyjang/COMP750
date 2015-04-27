@@ -58,7 +58,7 @@ public class GuiIMInteractor extends Thread
 		addToHistory(aFeedback);
 	}
 	
-	protected void displayOutput(String newValue) {
+	protected void displayOutput() {
 		//this.viewer.appendHistory(newValue+"\n");
 		StringBuilder allHistory = new StringBuilder();
 		for(int i = 0; i < history.size(); ++i) {
@@ -71,14 +71,16 @@ public class GuiIMInteractor extends Thread
 	@Override
 	public void elementAdded(int anIndex, Object aNewValue) {
 		ListEditObserved.newCase(OperationName.ADD, anIndex, aNewValue, ApplicationTags.IM, this);
-		displayOutput(history.get(anIndex));
+		displayOutput();
 		ListEditDisplayed.newCase(OperationName.ADD, anIndex, aNewValue, ApplicationTags.IM, this);
 	}
 	
 	@Override
 	public void elementRemoved(int anIndex, Object aNewValue) {
 		// TODO Auto-generated method stub
-		
+		ListEditObserved.newCase(OperationName.DELETE, anIndex, aNewValue, ApplicationTags.IM, this);
+		displayOutput();
+		ListEditDisplayed.newCase(OperationName.DELETE, anIndex, aNewValue, ApplicationTags.IM, this);
 	}
 	
 	@Override
@@ -176,6 +178,8 @@ public class GuiIMInteractor extends Thread
 	@Override
 	public void elementReplaced(int anIndex, Object aNewValue) {
 		// TODO Auto-generated method stub
-		
+		ListEditObserved.newCase(OperationName.REPLACE, anIndex, aNewValue, ApplicationTags.IM, this);
+		displayOutput();
+		ListEditDisplayed.newCase(OperationName.REPLACE, anIndex, aNewValue, ApplicationTags.IM, this);
 	}
 }

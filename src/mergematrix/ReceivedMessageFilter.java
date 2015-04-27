@@ -26,9 +26,12 @@ public class ReceivedMessageFilter
 	
 	public void filterMessage(ReceivedMessage msg) {
 		// TODO Auto-generated method stub
-		if(msg.isUserMessage() && isOTEnabled() &&
-				msg.getUserMessage() instanceof OTMessage) {
-			OTMessage otMessage = (OTMessage) msg.getUserMessage();
+		if(!msg.isUserMessage() || !isOTEnabled() || !(msg.getUserMessage() instanceof OTMessage)) {
+			messageProcessor.processMessage(msg);
+			return;
+		}
+		OTMessage otMessage = (OTMessage) msg.getUserMessage();
+		if(otMessage.getMessage() instanceof ListEdit) {
 			TimeStamp remoteTs = otMessage.getTimeStamp();
 			ListEdit remoteOp = (ListEdit) otMessage.getMessage();
 			
@@ -45,10 +48,20 @@ public class ReceivedMessageFilter
 			msg.setUserMessage(remoteOp);
 			TimeStamp.printAll("Trnsd Rcved Mse", otManager.getTimeStamp(), remoteOp);
 			messageProcessor.processMessage(msg);
-		} else {
-			if(msg.getUserMessage() instanceof MergePolicyEdit) {
-				System.out.println("I've received a MergePolicyEdit!");
-			}
+		} else if(otMessage.getMessage() instanceof MergePolicyEdit) {
+			TimeStamp remoteTs = otMessage.getTimeStamp();
+			MergePolicyEdit remoteOp = (MergePolicyEdit) otMessage.getMessage();
+			
+			/*
+			OTListEditReceived.newCase(remoteOp.getList(), 
+					remoteOp.getOperationName(), remoteOp.getIndex(), 
+					remoteOp.getElement(), remoteTs.getLocal(),
+					remoteTs.getRemote(), msg.getClientName(), this);
+					*/
+			OTManager otManager = otManagers.get(ApplicationTags.MERGE_MATRIX);
+			remoteOp = otManager.transformMergePolicy(remoteOp, remoteTs);
+			otManager.getTimeStamp().incRemote();
+			msg.setUserMessage(remoteOp);
 			messageProcessor.processMessage(msg);
 		}
 	}

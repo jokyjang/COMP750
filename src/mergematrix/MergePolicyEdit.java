@@ -26,4 +26,8 @@ public class MergePolicyEdit implements Serializable{
 	public MergePolicy getPolicy() {
 		return policy;
 	}
+	
+	public void setPolicy(MergePolicy newMergePolicy) {
+		policy = newMergePolicy;
+	}
 }

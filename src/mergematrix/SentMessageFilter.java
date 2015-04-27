@@ -21,8 +21,11 @@ public class SentMessageFilter implements MessageFilter<SentMessage> {
 	}
 
 	public void filterMessage(SentMessage msg) {
-		if(msg.isUserMessage() && isOTEnabled() &&
-				msg.getUserMessage() instanceof ListEdit) {
+		if(!msg.isUserMessage() || !isOTEnabled()) {
+			messageProcessor.processMessage(msg);
+			return;
+		}
+		if(msg.getUserMessage() instanceof ListEdit) {
 			ListEdit listEdit = (ListEdit) msg.getUserMessage();
 			OTManager otManager = otManagers.get(listEdit.getList());
 			TimeStamp timeStamp = otManager.getTimeStamp();
@@ -48,11 +51,31 @@ public class SentMessageFilter implements MessageFilter<SentMessage> {
 					timeStamp.getLocal(), timeStamp.getRemote(), 
 					otManager.getUserName(), this);
 					*/
-		} else {
-			if(msg.getUserMessage() instanceof MergePolicyEdit) {
-				System.out.println("I've sent an MergePolicyEdit message!");
-			}
+		} else if(msg.getUserMessage() instanceof MergePolicyEdit) {
+			MergePolicyEdit mergePolicyEdit = (MergePolicyEdit) msg.getUserMessage();
+			OTManager otManager = otManagers.get(ApplicationTags.MERGE_MATRIX);
+			TimeStamp timeStamp = otManager.getMergePolicyTimeStamp();
+			timeStamp.incLocal();
+			LocalSiteCountIncremented.newCase(msg.getSendingUser(), 
+					msg.getSendingUser(), timeStamp.getLocal(),
+					timeStamp.getRemote(), this);
+			OTMessage otMessage = new OTMessage(
+					(TimeStamp)Misc.deepCopy(timeStamp), mergePolicyEdit);
+			msg.setUserMessage(otMessage);
 			messageProcessor.processMessage(msg);
+			
+			
+			/*OTListEditSent.newCase(listEdit.getList(), listEdit.getOperationName(), 
+					listEdit.getIndex(), listEdit.getElement(),
+					timeStamp.getLocal(), timeStamp.getRemote(), 
+					otManager.getUserName(), this);
+					*/
+			otManager.addToMergePolicyBuffer(otMessage);
+			/*OTListEditBuffered.newCase(listEdit.getList(), listEdit.getOperationName(), 
+					listEdit.getIndex(), listEdit.getElement(),
+					timeStamp.getLocal(), timeStamp.getRemote(), 
+					otManager.getUserName(), this);
+					*/
 		}
 	}
 	

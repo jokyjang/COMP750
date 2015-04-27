@@ -46,6 +46,7 @@ public class GuiComposerAndLauncher {
 		otManagers = new HashMap<String, OTManager>();
 		otManagers.put(ApplicationTags.IM, new OTManager(user, false));
 		otManagers.put(ApplicationTags.EDITOR, new OTManager(user, false));
+		otManagers.put(ApplicationTags.MERGE_MATRIX, new OTManager(user, false));
 		
 		MessageFilterCreator<SentMessage> sentMessageQueuerCreator = 
 				new OTSendFilterCreator(otManagers);
