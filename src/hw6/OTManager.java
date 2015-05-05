@@ -5,8 +5,6 @@ import im.ListEdit;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.OperationsException;
-
 import trace.echo.modular.OperationName;
 import trace.ot.InitialOTTimeStampCreated;
 import trace.ot.LocalEditCountIncremented;

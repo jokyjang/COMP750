@@ -7,6 +7,8 @@ public interface ApplicationTags {
 	String ECHOER = "Echoer";
 	String IM = "Instant Messaging";
 	String EDITOR = "Editor";
+	String IM_MM = "IM Merge Matrix";
+	String EDITOR_MM = "Editor Merge Matrix";
 	String MERGE_MATRIX = "MergeMatrix";
 	
 	String TELEPOINTER = "Telepointer";

@@ -2,7 +2,7 @@ package trace.echo.modular;
 
 import util.misc.Common;
 
-public enum OperationName {
+public enum OperationName{
 	ADD,
 	DELETE,
 	REPLACE,

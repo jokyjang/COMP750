@@ -46,7 +46,8 @@ public class GuiComposerAndLauncher {
 		otManagers = new HashMap<String, OTManager>();
 		otManagers.put(ApplicationTags.IM, new OTManager(user, false));
 		otManagers.put(ApplicationTags.EDITOR, new OTManager(user, false));
-		otManagers.put(ApplicationTags.MERGE_MATRIX, new OTManager(user, false));
+		//otManagers.put(ApplicationTags.IM_MM, new OTManager(user, false));
+		//otManagers.put(ApplicationTags.EDITOR_MM, new OTManager(user, false));
 		
 		MessageFilterCreator<SentMessage> sentMessageQueuerCreator = 
 				new OTSendFilterCreator(otManagers);
@@ -59,9 +60,9 @@ public class GuiComposerAndLauncher {
 		
 		comm = this.createCommunicator(args);
 		ps = new ParameterSetter(comm, otManagers);
-		for(OTManager otManager : otManagers.values()) {
-			otManager.setMergeMatrix(ps.getMergeMatrix());
-		}
+//		for(OTManager otManager : otManagers.values()) {
+//			otManager.setMergeMatrix(ps.getMergeMatrix());
+//		}
 		GUIView viewer = new GUIView();
 		composeIM(viewer);
 		composeEditor(viewer);

@@ -18,8 +18,8 @@ public class OTManager {
 	private String userName;
 	private TimeStamp timeStamp;
 	private List<OTMessage> buffer;
-	private MergeMatrix mergeMatrix;
 	
+	private MergeMatrix mergeMatrix;
 	private List<OTMessage> mergePolicyBuffer;
 	private TimeStamp mergePolicyTimeStamp;
 	
@@ -159,9 +159,7 @@ public class OTManager {
 		}
 	}
 	
-	private ListEdit transformRD(ListEdit remoteOp, ListEdit localOp,
-			boolean remote) {
-		// TODO Auto-generated method stub
+	private ListEdit transformRD(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
 		if(newOp.getIndex() > localOp.getIndex()) {
 			newOp.setIndex(newOp.getIndex() - 1);
@@ -185,10 +183,7 @@ public class OTManager {
 		}
 		return newOp;
 	}
-
-	private ListEdit transformDR(ListEdit remoteOp, ListEdit localOp,
-			boolean remote) {
-		// TODO Auto-generated method stub
+	private ListEdit transformDR(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
 		if(newOp.getIndex() == localOp.getIndex()) {
 			switch(mergeMatrix.get(OperationName.DELETE, OperationName.REPLACE)) {
@@ -210,9 +205,7 @@ public class OTManager {
 		return newOp;
 	}
 
-	private ListEdit transformRR(ListEdit remoteOp, ListEdit localOp,
-			boolean remote) {
-		// TODO Auto-generated method stub
+	private ListEdit transformRR(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
 		if(newOp.getIndex() == localOp.getIndex()) {
 			switch(mergeMatrix.get(OperationName.REPLACE, OperationName.REPLACE)) {
@@ -234,19 +227,14 @@ public class OTManager {
 
 	private ListEdit transformIR(ListEdit remoteOp, ListEdit localOp,
 			boolean remote) {
-		// TODO Auto-generated method stub
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
 		if(newOp.getIndex() == localOp.getIndex()) {
-			// TODO Handle when different merge policy
 			switch(mergeMatrix.get(OperationName.ADD, OperationName.REPLACE)) {
 			case NONE:
-				//TODO cannot accept none cause we don't know the original character
-				//break;
 			case BOTH:
 			case SERVER:
 			case CLIENT:
 			default:
-				// INSERTION: do nothing, no change
 				break;
 			}
 		}
@@ -255,12 +243,10 @@ public class OTManager {
 
 	private ListEdit transformRI(ListEdit remoteOp, ListEdit localOp,
 			boolean remote) {
-		// TODO Auto-generated method stub
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
 		if(localOp.getIndex() < newOp.getIndex()) {
 			newOp.setIndex(newOp.getIndex() + 1);
 		} else if(localOp.getIndex() == newOp.getIndex()) {
-			// TODO handle when different merge policy
 			switch(mergeMatrix.get(OperationName.REPLACE, OperationName.ADD)) {
 			case NONE:
 			case SERVER:
@@ -287,7 +273,7 @@ public class OTManager {
 			case CLIENT:
 			case BOTH:
 			default:
-				newOp.setIndex(newOp.getIndex() + 1);
+				newOp.setIndex(newOp.getIndex()+1);
 			}
 		}
 		return newOp;
@@ -316,7 +302,6 @@ public class OTManager {
 	// transform insertion operation with respect to insertion
 	private ListEdit transformII(ListEdit remoteOp, ListEdit localOp, boolean remote) {
 		ListEdit newOp = (ListEdit) Misc.deepCopy(remoteOp);
-		//System.out.println("transformII" + mergeMatrix.get(OperationName.ADD, OperationName.ADD));
 		if((remoteOp.getIndex() > localOp.getIndex())) {
 			newOp.setIndex(remoteOp.getIndex() + 1);
 		} else if (remoteOp.getIndex() == localOp.getIndex()) {

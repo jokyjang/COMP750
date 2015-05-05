@@ -18,13 +18,13 @@ public class AListInCoupler<ElementType> implements PeerMessageListener {
 		// need for integration with RPC
 		if (message instanceof ListEdit){
 			processReceivedListEdit((ListEdit<ElementType>) message, userName);
-		}else if(message instanceof MergePolicyEdit &&
-				list.getTracingTag().equalsIgnoreCase(ApplicationTags.IM)) {
-			//System.out.println("PeerMessageListener received an MergePolicyEdit");
+		}else if(message instanceof MergePolicyEdit) {
 			MergePolicyEdit mpe = (MergePolicyEdit) message;
+			if(!list.getTracingTag().equalsIgnoreCase(mpe.getTracingTag())) return;
+			
 			//if(parameterSetter == null) System.out.println("ParameterSetter is null!");
 			//else System.out.println("ParameterSetter is not null!");
-			parameterSetter.setMergePolicy(mpe.getServer(), mpe.getClient(), mpe.getPolicy());
+			parameterSetter.setMergePolicy(mpe.getTracingTag(), mpe.getServer(), mpe.getClient(), mpe.getPolicy());
 		}
 	}
 	protected void processReceivedListEdit (ListEdit<ElementType> aRemoteEdit, String aUserName) {
@@ -46,7 +46,7 @@ public class AListInCoupler<ElementType> implements PeerMessageListener {
 //		history.add(aRemoteEdit.getIndex(), anInput);
 		// actually no bounce back should occur should occur
 		if(aRemoteEdit.getOperationName() == OperationName.ADD) {
-			System.out.println("This is processReceivedListEdit");
+			//System.out.println("This is processReceivedListEdit");
 			list.observableAdd(normalizedIndex(list, aRemoteEdit.getIndex()), anInput);
 		} else if(aRemoteEdit.getOperationName() == OperationName.DELETE) {
 			//list.observableAdd(normalizedIndex(list, aRemoteEdit.getIndex()), anInput);

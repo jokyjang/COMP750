@@ -4,6 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -11,10 +12,12 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
@@ -31,8 +34,14 @@ public class ParameterSetter extends JFrame {
 	private int minDelay = 0;
 	private int delayVariation = 0;
 	private boolean otable = true;
-	private MergeMatrix mergePolicy = null;
-	private MyTableModel tableModel = null;
+	
+//	
+//	private MergeMatrix imMergePolicy = null;
+//	private MyTableModel imTableModel = null;
+//	private MergeMatrix editorMergePolicy = null;
+//	private MyTableModel editorTableModel = null;
+	private HashMap<String, MergeMatrix> mergePolicy = new HashMap<String, MergeMatrix>();
+	private HashMap<String, MyTableModel> tableModel = new HashMap<String, MyTableModel>();
 	
 	private Communicator comm;
 	private Map<String, OTManager> otManagers;
@@ -50,13 +59,16 @@ public class ParameterSetter extends JFrame {
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
 		this.initDelay();
-		this.initMergeMatrix();
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.addTab(ApplicationTags.IM, this.initMergeMatrix(ApplicationTags.IM));
+		tabbedPane.addTab(ApplicationTags.EDITOR, this.initMergeMatrix(ApplicationTags.EDITOR));
+		this.add(tabbedPane);
 		this.pack();
 	}
 	
-	public MergeMatrix getMergeMatrix() {
+	public MergeMatrix getMergeMatrix(String tag) {
 		// TODO Auto-generated method stub
-		return this.mergePolicy;
+		return this.mergePolicy.get(tag);
 	}
 
 	private void initDelay() {
@@ -123,12 +135,14 @@ public class ParameterSetter extends JFrame {
 		this.add(panel);
 	}
 	
-	private void initMergeMatrix() {
-		this.mergePolicy = new SimpleListMergeMatrix();
-		this.tableModel = new MyTableModel(mergePolicy);
-		JTable table = new JTable(tableModel);
-		for(int i = 1; i < tableModel.getColumnCount(); ++i) {
-			JComboBox policyList = new JComboBox(mergePolicy.getAllPolicies());
+	private JComponent initMergeMatrix(String tag) {
+		MergeMatrix aMergeMatrix = this.otManagers.get(tag).getMergeMatrix();
+		MyTableModel aTableModel = new MyTableModel(aMergeMatrix, tag);
+		this.mergePolicy.put(tag, aMergeMatrix);
+		this.tableModel.put(tag, aTableModel);
+		JTable table = new JTable(aTableModel);
+		for(int i = 1; i < aTableModel.getColumnCount(); ++i) {
+			JComboBox policyList = new JComboBox(aMergeMatrix.getAllPolicies());
 			table.getColumnModel().getColumn(i).setCellEditor(
 					new DefaultCellEditor(policyList));
 			//Set up tool tips for the sport cells.
@@ -144,7 +158,7 @@ public class ParameterSetter extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(table);
 		//table.setFillsViewportHeight(false);
 		scrollPane.setPreferredSize(getMinimumSize());
-		this.add(scrollPane);
+		return scrollPane;
 	}
 	
 	private void resetDelay() {
@@ -170,21 +184,23 @@ public class ParameterSetter extends JFrame {
 		this.add(panel);
 	}
 	
-	public void setMergePolicy(OperationName server, OperationName client,
+	public void setMergePolicy(String tag, OperationName server, OperationName client,
 			MergePolicy policy) {
 		// TODO Auto-generated method stub
-		tableModel.setValueAtFromRemote(policy, server, client);
+		this.tableModel.get(tag).setValueAtFromRemote(policy, server, client);
 	}
 	
 	private class MyTableModel extends AbstractTableModel {
 		private MergeMatrix mergeMatrix = null;
 		OperationName[] operations = null;
 		boolean sentFromRemote = false;
+		String tracingTag;
 		
-		public MyTableModel(MergeMatrix aMergeMatrix) {
+		public MyTableModel(MergeMatrix aMergeMatrix, String tag) {
 			super();
 			mergeMatrix = aMergeMatrix;
 			operations = mergeMatrix.getAllOperations();
+			tracingTag = tag;
 		}
 	    public int getColumnCount() {
 	        return operations.length + 1;
@@ -220,14 +236,10 @@ public class ParameterSetter extends JFrame {
 	     */
 	    public void setValueAt(Object value, int row, int col) {
 			mergeMatrix.set(operations[row], operations[col-1], (MergePolicy) value);
-			
-			//System.out.println("set Value at " + row + ", " + col + ": " + value);
-			//mergeMatrix.print();
-			
 			this.fireTableCellUpdated(row, col);
 			if(this.sentFromRemote) return;
 			MergePolicyEdit mergePolicyEdit = new MergePolicyEdit(
-					operations[row], operations[col-1], (MergePolicy)getValueAt(row, col));
+					operations[row], operations[col-1], (MergePolicy)getValueAt(row, col), tracingTag);
 			comm.toOthers(mergePolicyEdit);
 	    }
 	    public void setValueAtFromRemote(Object value, OperationName a, OperationName b) {

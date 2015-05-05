@@ -46,4 +46,11 @@ public class TimeStamp implements Serializable {
 		System.out.println(le.getList() + ","+le.getOperationName()+","
 				+ le.getIndex() + "," + le.getElement());
 	}
+
+	public static void printAllMergePolicyEdit(String prefix,
+			TimeStamp timeStamp, MergePolicyEdit mergePolicyEdit) {
+		System.out.print("<"+prefix+">: " + timeStamp.toString() + " ");
+		System.out.println(mergePolicyEdit.getServer()+","+mergePolicyEdit.getClient()
+				+","+mergePolicyEdit.getPolicy());
+	}
 }
